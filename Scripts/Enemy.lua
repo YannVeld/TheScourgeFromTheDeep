@@ -9,6 +9,16 @@ local Enemy = Class{
 
         self.position = position
         self.health = health
+        self.isDead = false
+    end,
+
+    DoDamage = function(self, amount)
+        self.health = self.health - amount
+
+        if self.health <= 0 then
+            self.health = 0
+            self.isDead = true
+        end
     end,
 }
 

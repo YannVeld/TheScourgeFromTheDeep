@@ -1,11 +1,12 @@
 
 Collider = Class{
-    init = function(self, rectangles, position, type)
+    init = function(self, rectangles, position, type, instance)
         if type == nil then type = "None" end
 
         self.rectangles = rectangles
         self.position = position
         self.type = type
+        self.instance = instance
     end,
 
     setPosition = function(self, position)

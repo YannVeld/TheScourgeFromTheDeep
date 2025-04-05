@@ -11,6 +11,10 @@ Animation = Class{
         self:reset(startFrame)
     end,
 
+    setAnimationSpeed = function(self, speed)
+        self.speed = speed
+    end,
+
     _updateTime = function(self, dt)
         if self.speed == 0 then
             return

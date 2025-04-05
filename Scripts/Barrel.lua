@@ -22,12 +22,21 @@ local Barrel = Class{
 
         local rectPos = self.position - Vector(4,2)
         local myRect = Rectangle(rectPos, 7, 5)
-        self.collider = Collider({myRect}, self.position, "Barrel")
+        self.collider = Collider({myRect}, self.position, "Enemy", self)
         World:add(self.collider)
+    end,
+
+    checkDead = function(self)
+        if self.isDead then
+            self.animationSpeed = Barrel.animSpeed
+            self.breakingAnimation:setAnimationSpeed(self.animationSpeed)
+        end
     end,
 
     update = function(self, dt)
         Enemy.update(self, dt)
+
+        self:checkDead()
 
         self.breakingAnimation:update(dt)
 

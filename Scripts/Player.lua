@@ -35,7 +35,7 @@ local Player = Class{
 
         local myColliderRect = Rectangle(Vector(0,0), 8, 4)
         myColliderRect:setPosition(self.position - Vector(4,-6))
-        self.collider = Collider({myColliderRect}, self.position, "Player")
+        self.collider = Collider({myColliderRect}, self.position, "Player", self)
         World:add(self.collider)
     end,
 
