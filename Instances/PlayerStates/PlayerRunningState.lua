@@ -18,13 +18,10 @@ RunningState = Class{
         self.runningAnimation = Animation(self.sprites, RunningState.animSpeed)
     end,
 
-    boolToNumber = function(bool)
-        return bool and 1 or 0
-    end,
 
     move = function(self, dt)
-        local verPress = - RunningState.boolToNumber(love.keyboard.isDown("w")) + RunningState.boolToNumber(love.keyboard.isDown("s"))
-        local horPress = RunningState.boolToNumber(love.keyboard.isDown("d")) - RunningState.boolToNumber(love.keyboard.isDown("a"))
+        local horPress = self.player.inputManager.horizontalInput
+        local verPress = self.player.inputManager.verticalInput
 
         -- Friction
         local acceleration = Vector(0,0)
@@ -35,11 +32,8 @@ RunningState = Class{
         acceleration = acceleration + frictionVec
 
         -- Change velocity
-        if horPress ~= 0 then
-            self.player.velocity.x = horPress * RunningState.moveSpeed
-        end
-        if verPress ~= 0 then
-            self.player.velocity.y = verPress * RunningState.moveSpeed
+        if (horPress ~= 0) or (verPress ~= 0) then
+            self.player.velocity = Vector(horPress, verPress):normalized() * RunningState.moveSpeed
         end
 
         self.player.velocity = self.player.velocity + acceleration * dt

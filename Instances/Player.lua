@@ -1,12 +1,14 @@
 Instance = require "Packages.YannUtil.Instance"
 
+require"Instances.PlayerInputManager"
+
 PlayerIdleState = require"Instances.PlayerStates.PlayerIdleState"
 PlayerRunningState = require"Instances.PlayerStates.PlayerRunningState"
 
 local Player = Class{
     __includes = {Instance},
 
-    speedStopCutoff = 1.0,
+    speedStopCutoff = 10.0,
 
     init = function(self)
         Instance.init(self)
@@ -14,6 +16,8 @@ local Player = Class{
         self.position = Vector(50.0, 50.0)
         self.velocity = Vector(0.0, 0.0)
         self.lookDir = 1
+
+        self.inputManager = PlayerInputManager()
 
         self.idleState = PlayerIdleState(self)
         self.runningState = PlayerRunningState(self)
@@ -39,9 +43,11 @@ local Player = Class{
     end,
 
     doMovement = function(self, dt)
-        local speed = self.velocity:len()
-        if speed < self.speedStopCutoff then
-            self.velocity = Vector(0,0)
+        if math.abs( self.velocity.x ) < self.speedStopCutoff then
+            self.velocity.x = 0.0
+        end
+        if math.abs( self.velocity.y ) < self.speedStopCutoff then
+            self.velocity.y = 0.0
         end
 
         if math.abs(self.velocity.x) > 0 then
@@ -52,6 +58,7 @@ local Player = Class{
     end,
 
     update = function(self, dt)
+        self.inputManager:update(dt)
         self.state = self:changeState()
         self.state:update(dt) 
         self:doMovement(dt)
