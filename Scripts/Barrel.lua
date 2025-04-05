@@ -15,8 +15,8 @@ local Barrel = Class{
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(Barrel.spriteSheet, 32, 32, 0, 0)
         self.breakingAnimation = Animation(self.sprites, self.animationSpeed, 1, false)
 
-        local rectPos = self.position - Vector(6,3)
-        local myRect = Rectangle(rectPos, 11, 9)
+        local rectPos = self.position - Vector(4,2)
+        local myRect = Rectangle(rectPos, 7, 5)
         self.collider = Collider({myRect}, self.position, "Barrel")
         World:add(self.collider)
     end,
@@ -29,6 +29,8 @@ local Barrel = Class{
         if self.breakingAnimation.animationDone then
             self:destroy()
         end
+
+        self.zorder = self.position.y
     end,
 
     draw = function(self)
@@ -36,9 +38,9 @@ local Barrel = Class{
         local oy = self.sprites[1]:getHeight() / 2
         self.breakingAnimation:draw(self.position.x, self.position.y, 0, 1, 1, ox, oy)
 
-        --love.graphics.setColor(Colors.red)
-        --self.collider:draw()
-        --love.graphics.setColor(Colors.white)
+        love.graphics.setColor(Colors.red)
+        self.collider:draw()
+        love.graphics.setColor(Colors.white)
     end,
 }
 

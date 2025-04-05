@@ -12,6 +12,7 @@ InstanceManagerClass = Class{
         if instanceID == nil then 
             instanceID = #InstanceManager.list + 1
         end
+        instance.zorder = #InstanceManager.list
 
         table.insert(InstanceManager.list, instanceID, instance)
     end,
@@ -27,6 +28,10 @@ InstanceManagerClass = Class{
     end,
 
     draw = function()
+        -- Order on zorder
+        local function drawSort(a,b) return a.zorder < b.zorder end
+        table.sort(InstanceManager.list, drawSort)
+
         for i,instance in ipairs(InstanceManager.list) do
             instance:draw()
         end

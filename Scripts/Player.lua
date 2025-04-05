@@ -11,6 +11,7 @@ local Player = Class{
     __includes = {Instance},
 
     speedStopCutoff = 10.0,
+    zorderPosOffset = 6,
 
     init = function(self)
         Instance.init(self)
@@ -138,6 +139,8 @@ local Player = Class{
         self:doMovement(dt)
 
         self.inputManager:lateUpdate(dt)
+
+        self.zorder = self.position.y + Player.zorderPosOffset
     end,
 
     draw = function(self)

@@ -3,6 +3,7 @@ InstanceManager = require "Packages.YannUtil.InstanceManager"
 return Class{
     init = function(self, instanceID)
         --InstanceID is optional!
+        self.zorder = 0
         InstanceManager.declare(self, instanceID)
     end,
 

@@ -7,7 +7,7 @@ Class = require "Packages.hump.class"
 --Signal = require 'Packages.hump.signal'
 Camera = require "Packages.hump.camera"
 --
---Lume = require "Packages.lume.lume"
+Lume = require "Packages.lume.lume"
 --
 --Shack = require "Packages.shack.shack"
 --
