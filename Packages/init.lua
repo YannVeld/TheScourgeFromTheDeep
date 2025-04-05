@@ -1,4 +1,4 @@
---Push = require "Packages.push.push"
+Push = require "Packages.push.push"
 --
 Gamestate = require "Packages.hump.gamestate"
 Timer = require "Packages.hump.timer"
