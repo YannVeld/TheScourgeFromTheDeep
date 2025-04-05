@@ -13,6 +13,10 @@ local Player = Class{
     speedStopCutoff = 10.0,
     zorderPosOffset = 6,
 
+    shadowRadiusx = 8,
+    shadowRadiusy = 3,
+    shadowOffsety = 9,
+
     init = function(self)
         Instance.init(self)
 
@@ -143,8 +147,16 @@ local Player = Class{
         self.zorder = self.position.y + Player.zorderPosOffset
     end,
 
+    drawShadow = function(self)
+        love.graphics.setColor(68/255,56/255,70/255,1)
+        love.graphics.ellipse('fill', self.position.x, self.position.y + Player.shadowOffsety, Player.shadowRadiusx, Player.shadowRadiusy)
+        love.graphics.setColor(Colors.white)
+    end,
+
     draw = function(self)
+        self:drawShadow()
         self.state:draw()
+
 
         --love.graphics.setColor(Colors.blue)
         --self.collider:draw()
