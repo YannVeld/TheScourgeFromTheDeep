@@ -8,13 +8,14 @@ Animation = Class{
         self.speed = speed
         self.repeatAnim = repeatAnim
 
-        self.curFrame = startFrame
-        self.currentTime = (startFrame - 1) / self.speed
-        self.animationDone = false
-
+        self:reset(startFrame)
     end,
 
     _updateTime = function(self, dt)
+        if self.speed == 0 then
+            return
+        end
+
         local duration = #self.sprites / self.speed
         
         self.currentTime = self.currentTime + dt
@@ -30,6 +31,10 @@ Animation = Class{
     end,
 
     _updateFrame = function(self)
+        if self.speed == 0 then
+            return
+        end
+
         self.curFrame = math.floor( self.currentTime * self.speed ) + 1
         if self.curFrame > #self.sprites then
             self.curFrame = #self.sprites
@@ -40,7 +45,11 @@ Animation = Class{
         if not startFrame then startFrame = 1 end
 
         self.curFrame = startFrame
-        self.currentTime = (startFrame - 1) / self.speed
+        if self.speed == 0 then
+            self.currentTime = 0
+        else
+            self.currentTime = (startFrame - 1) / self.speed
+        end
         self.animationDone = false
     end,
 

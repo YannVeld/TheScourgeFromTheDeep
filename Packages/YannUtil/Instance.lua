@@ -21,6 +21,9 @@ return Class{
     mousepressed = function(self, x, y, button, istouch, presses)
     end,
 
+    keypressed = function(self, key, scancode, isrepeat)
+    end,
+
     destroy = function(self)
         InstanceManager.remove(self)
         self=nil

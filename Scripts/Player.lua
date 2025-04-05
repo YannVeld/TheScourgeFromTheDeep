@@ -27,6 +27,16 @@ local Player = Class{
         self.attackingState = PlayerAttackingState(self)
 
         self.state = self.idleState
+
+        local myColliderRect = Rectangle(Vector(0,0), 8, 4)
+        myColliderRect:setPosition(self.position - Vector(4,-6))
+        self.collider = Collider({myColliderRect}, self.position, "Player")
+        World:add(self.collider)
+    end,
+
+    setPosition = function(self, position)
+        self.position = position
+        self.collider:setPosition(position)
     end,
 
     changeState = function(self)
@@ -65,6 +75,36 @@ local Player = Class{
         return n < 0 and -1 or n > 0 and 1 or 0
     end,
 
+    resolveMovementObstructions = function(self, moveStep)
+        -- Diagonal
+        local tryPos = self.position:clone() + moveStep
+        self.collider:setPosition(tryPos)
+        local colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+
+        -- Try along x
+        tryPos = self.position:clone()
+        tryPos.x = tryPos.x + moveStep.x
+        self.collider:setPosition(tryPos)
+        colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+        
+        -- Try along y
+        tryPos = self.position:clone()
+        tryPos.y = tryPos.y + moveStep.y
+        self.collider:setPosition(tryPos)
+        colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+
+        return self.position
+    end,
+
     doMovement = function(self, dt)
         if math.abs( self.velocity.x ) < self.speedStopCutoff then
             self.velocity.x = 0.0
@@ -77,7 +117,9 @@ local Player = Class{
             self.lookDir = Player.sign( self.velocity.x )
         end
 
-        self.position = self.position + self.velocity * dt
+        local moveStep = self.velocity * dt
+        local newPos = self:resolveMovementObstructions(moveStep)
+        self:setPosition(newPos)
     end,
 
     update = function(self, dt)
@@ -99,13 +141,11 @@ local Player = Class{
     end,
 
     draw = function(self)
-        --local sprWidth = 8
-        --local sprHeight = 18
-        --love.graphics.setColor(Colors.black)
-        --love.graphics.rectangle("line", self.position.x-sprWidth/2, self.position.y-sprHeight/2, 8, 18)
-        --love.graphics.setColor(Colors.white)
-
         self.state:draw()
+
+        --love.graphics.setColor(Colors.blue)
+        --self.collider:draw()
+        --love.graphics.setColor(Colors.white)
     end,
 
     keypressed = function(self, key, scancode, isrepeat)

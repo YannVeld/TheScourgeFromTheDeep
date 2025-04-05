@@ -2,6 +2,9 @@ require("Packages")
 Sprites = require("Sprites")
 
 local InstanceManager = require "Packages.YannUtil.InstanceManager"
+require "Scripts.Collisions.Rectangle"
+require "Scripts.Collisions.Collider"
+require "Scripts.Collisions.ColliderWorld"
 
 local Gamestate_thegame = require("GameStates/thegame")
 local initialGameState = Gamestate_thegame
@@ -16,6 +19,8 @@ local windowWidth, windowHeight = 1920, 1080
 
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})
+
+    World = ColliderWorld()
 
     love.math.setRandomSeed(love.timer.getTime())
     math.randomseed(love.timer.getTime())
