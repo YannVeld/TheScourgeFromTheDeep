@@ -13,8 +13,14 @@ IdleState = Class{
         self.idleAnimation = Animation(self.sprites, IdleState.animSpeed)
     end,
 
+    enter = function(self)
+    end,
+
     update = function(self, dt)
         self.idleAnimation:update(dt)
+    end,
+
+    exit = function(self)
     end,
 
     draw = function(self)

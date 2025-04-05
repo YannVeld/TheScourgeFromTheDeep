@@ -1,8 +1,6 @@
 
 RunningState = Class{
 
-    maxSpeed = 500.0,
-    clickAccel = 500.0,
     friction = 500.0,
     moveSpeed = 100.0,
 
@@ -18,6 +16,8 @@ RunningState = Class{
         self.runningAnimation = Animation(self.sprites, RunningState.animSpeed)
     end,
 
+    enter = function(self)
+    end,
 
     move = function(self, dt)
         local horPress = self.player.inputManager.horizontalInput
@@ -37,18 +37,15 @@ RunningState = Class{
         end
 
         self.player.velocity = self.player.velocity + acceleration * dt
-
-        local speed = self.player.velocity:len()
-        if speed > RunningState.maxSpeed then
-            self.player.velocity = Vector(0,0)
-        end
-
     end,
 
 
     update = function(self, dt)
         self.runningAnimation:update(dt)
         self:move(dt)
+    end,
+
+    exit = function(self)
     end,
 
     draw = function(self)

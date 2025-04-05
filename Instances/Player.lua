@@ -4,6 +4,7 @@ require"Instances.PlayerInputManager"
 
 PlayerIdleState = require"Instances.PlayerStates.PlayerIdleState"
 PlayerRunningState = require"Instances.PlayerStates.PlayerRunningState"
+PlayerDashingState = require"Instances.PlayerStates.PlayerDashingState"
 
 local Player = Class{
     __includes = {Instance},
@@ -21,6 +22,7 @@ local Player = Class{
 
         self.idleState = PlayerIdleState(self)
         self.runningState = PlayerRunningState(self)
+        self.dashingState = PlayerDashingState(self)
 
         self.state = self.idleState
     end,
@@ -28,10 +30,17 @@ local Player = Class{
     changeState = function(self)
         local speed = self.velocity:len()
         local isMoving = speed > 0
+        local isDashing = (self.state == self.dashingState) and (not self.dashingState.dashEnded)
 
-        local moveKeyPressed = love.keyboard.isDown("w") or love.keyboard.isDown("s") or love.keyboard.isDown("a") or love.keyboard.isDown("d")
+        if isDashing then
+            return self.dashingState
+        else
+            if self.inputManager.dashPressed and self.dashingState.canDash then
+                return self.dashingState
+            end
+        end
 
-        if isMoving or moveKeyPressed then
+        if isMoving or self.inputManager.moveKeyPressed then
             return self.runningState
         end
 
@@ -59,9 +68,19 @@ local Player = Class{
 
     update = function(self, dt)
         self.inputManager:update(dt)
-        self.state = self:changeState()
+        self.dashingState:passiveUpdate(dt)
+
+        local newState = self:changeState()
+        if newState ~= self.state then
+            self.state:exit()
+            self.state = newState
+            self.state:enter()
+        end
+
         self.state:update(dt) 
         self:doMovement(dt)
+
+        self.inputManager:lateUpdate(dt)
     end,
 
     draw = function(self)
@@ -74,6 +93,9 @@ local Player = Class{
         self.state:draw()
     end,
 
+    keypressed = function(self, key, scancode, isrepeat)
+        self.inputManager:keypressed(key, scancode, isrepeat)
+    end,
 }
 
 return Player

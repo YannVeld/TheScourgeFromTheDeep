@@ -41,3 +41,7 @@ end
 function love.mousepressed(x, y, button, istouch, presses)
     InstanceManager.mousepressed(x, y, button, istouch, presses)
 end
+
+function love.keypressed(key, scancode, isrepeat)
+    InstanceManager.keypressed(key, scancode, isrepeat)
+end

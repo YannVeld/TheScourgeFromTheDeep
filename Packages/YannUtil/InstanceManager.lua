@@ -50,6 +50,12 @@ InstanceManagerClass = Class{
         end
     end,
 
+    keypressed = function(key, scancode, isrepeat)
+        for i,instance in ipairs(InstanceManager.list) do
+            instance:keypressed(key, scancode, isrepeat)
+        end
+    end,
+
     removeAll = function()
         Lume.clear(InstanceManager.list)
     end,
