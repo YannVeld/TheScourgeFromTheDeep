@@ -5,6 +5,7 @@ require"Instances.PlayerInputManager"
 PlayerIdleState = require"Instances.PlayerStates.PlayerIdleState"
 PlayerRunningState = require"Instances.PlayerStates.PlayerRunningState"
 PlayerDashingState = require"Instances.PlayerStates.PlayerDashingState"
+PlayerAttackingState = require"Instances.PlayerStates.PlayerAttackingState"
 
 local Player = Class{
     __includes = {Instance},
@@ -23,6 +24,7 @@ local Player = Class{
         self.idleState = PlayerIdleState(self)
         self.runningState = PlayerRunningState(self)
         self.dashingState = PlayerDashingState(self)
+        self.attackingState = PlayerAttackingState(self)
 
         self.state = self.idleState
     end,
@@ -31,11 +33,23 @@ local Player = Class{
         local speed = self.velocity:len()
         local isMoving = speed > 0
         local isDashing = (self.state == self.dashingState) and (not self.dashingState.dashEnded)
+        local isAttacking = (self.state == self.attackingState) and (not self.attackingState.attackEnded)
 
+        if isAttacking then
+            return self.attackingState
+        end
         if isDashing then
             return self.dashingState
-        else
+        end
+
+        if (not isAttacking) and (not isDashing) then
+            if self.inputManager.attackPressed and self.attackingState.canAttack then
+                self.inputManager:resetAttackPress()
+                return self.attackingState
+            end
+
             if self.inputManager.dashPressed and self.dashingState.canDash then
+                self.inputManager:resetDashPress()
                 return self.dashingState
             end
         end
@@ -69,6 +83,7 @@ local Player = Class{
     update = function(self, dt)
         self.inputManager:update(dt)
         self.dashingState:passiveUpdate(dt)
+        self.attackingState:passiveUpdate(dt)
 
         local newState = self:changeState()
         if newState ~= self.state then
@@ -95,6 +110,9 @@ local Player = Class{
 
     keypressed = function(self, key, scancode, isrepeat)
         self.inputManager:keypressed(key, scancode, isrepeat)
+    end,
+    mousepressed = function(self, x, y, button, istouch, presses)
+        self.inputManager:mousepressed(x, y, button, istouch, presses)
     end,
 }
 
