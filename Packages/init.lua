@@ -13,10 +13,11 @@ Camera = require "Packages.hump.camera"
 --
 --Baton = require "Packages.baton.baton"
 --
---require "Packages.UI"
+require "Packages.UI"
 
 InstanceManager = require "Packages.YannUtil.InstanceManager"
 Instance = require "Packages.YannUtil.Instance"
 --require "Packages.YannUtil.Grid"
 --require "Packages.YannUtil.GridObject"
 --require "Packages.YannUtil.StringExtensions"
+require "Packages.YannUtil.Animation"

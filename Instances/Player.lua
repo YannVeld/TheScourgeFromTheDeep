@@ -1,64 +1,70 @@
 Instance = require "Packages.YannUtil.Instance"
 
+PlayerIdleState = require"Instances.PlayerStates.PlayerIdleState"
+PlayerRunningState = require"Instances.PlayerStates.PlayerRunningState"
+
 local Player = Class{
     __includes = {Instance},
 
-    maxSpeed = 500.0,
-    clickAccel = 500.0,
-    friction = 500.0,
-    moveSpeed = 100.0,
-
-    sprite = Sprites.Knight,
+    speedStopCutoff = 1.0,
 
     init = function(self)
         Instance.init(self)
 
-        self.position = Vector(0.0, 0.0)
+        self.position = Vector(50.0, 50.0)
         self.velocity = Vector(0.0, 0.0)
+        self.lookDir = 1
+
+        self.idleState = PlayerIdleState(self)
+        self.runningState = PlayerRunningState(self)
+
+        self.state = self.idleState
     end,
 
-    boolToNumber = function(bool)
-        return bool and 1 or 0
-    end,
-
-    move = function(self, dt)
-        local verPress = - Player.boolToNumber(love.keyboard.isDown("w")) + Player.boolToNumber(love.keyboard.isDown("s"))
-        local horPress = Player.boolToNumber(love.keyboard.isDown("d")) - Player.boolToNumber(love.keyboard.isDown("a"))
-
-        -- Friction
-        local acceleration = Vector(0,0)
-        local normedVelocity = self.velocity:normalized()
-        local frictionVec = Vector(0,0)
-        frictionVec.x = - (1 - horPress) * normedVelocity.x * Player.friction
-        frictionVec.y = - (1 - verPress) * normedVelocity.y * Player.friction
-        acceleration = acceleration + frictionVec
-
-        -- Change velocity
-        if horPress ~= 0 then
-            self.velocity.x = horPress * Player.moveSpeed
-        end
-        if verPress ~= 0 then
-            self.velocity.y = verPress * Player.moveSpeed
-        end
-
-        self.velocity = self.velocity + acceleration * dt
-
+    changeState = function(self)
         local speed = self.velocity:len()
-        if speed > Player.maxSpeed then
+        local isMoving = speed > 0
+
+        local moveKeyPressed = love.keyboard.isDown("w") or love.keyboard.isDown("s") or love.keyboard.isDown("a") or love.keyboard.isDown("d")
+
+        if isMoving or moveKeyPressed then
+            return self.runningState
+        end
+
+        return self.idleState
+    end,
+
+    sign = function(n)
+        return n < 0 and -1 or n > 0 and 1 or 0
+    end,
+
+    doMovement = function(self, dt)
+        local speed = self.velocity:len()
+        if speed < self.speedStopCutoff then
             self.velocity = Vector(0,0)
         end
 
-        -- Change position
+        if math.abs(self.velocity.x) > 0 then
+            self.lookDir = Player.sign( self.velocity.x )
+        end
+
         self.position = self.position + self.velocity * dt
     end,
 
-
     update = function(self, dt)
-        self:move(dt)
+        self.state = self:changeState()
+        self.state:update(dt) 
+        self:doMovement(dt)
     end,
 
     draw = function(self)
-        love.graphics.draw(Player.sprite.image, self.position.x, self.position.y)
+        --local sprWidth = 8
+        --local sprHeight = 18
+        --love.graphics.setColor(Colors.black)
+        --love.graphics.rectangle("line", self.position.x-sprWidth/2, self.position.y-sprHeight/2, 8, 18)
+        --love.graphics.setColor(Colors.white)
+
+        self.state:draw()
     end,
 
 }
