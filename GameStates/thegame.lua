@@ -28,6 +28,11 @@ function thegame:keypressed( key, scancode, isrepeat )
         love.event.quit()
         return
     end
+    if key == "r" then
+        InstanceManager:removeAll()
+        love.load()
+        return
+    end
 end
 
 return thegame
