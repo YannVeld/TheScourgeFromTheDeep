@@ -1,7 +1,13 @@
+
+Player = require("Instances/Player")
+
+
 local thegame = {}
 
+local player
+
 function thegame:enter()
-    print("Hello World!")
+    player = Player()
 end
 
 function thegame:update(dt)
