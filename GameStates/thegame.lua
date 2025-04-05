@@ -1,5 +1,5 @@
 
-Player = require("Instances/Player")
+Player = require("Scripts/Player")
 
 
 local thegame = {}

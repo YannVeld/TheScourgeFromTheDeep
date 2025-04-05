@@ -1,11 +1,11 @@
 Instance = require "Packages.YannUtil.Instance"
 
-require"Instances.PlayerInputManager"
+require"Scripts.PlayerInputManager"
 
-PlayerIdleState = require"Instances.PlayerStates.PlayerIdleState"
-PlayerRunningState = require"Instances.PlayerStates.PlayerRunningState"
-PlayerDashingState = require"Instances.PlayerStates.PlayerDashingState"
-PlayerAttackingState = require"Instances.PlayerStates.PlayerAttackingState"
+PlayerIdleState = require"Scripts.PlayerStates.PlayerIdleState"
+PlayerRunningState = require"Scripts.PlayerStates.PlayerRunningState"
+PlayerDashingState = require"Scripts.PlayerStates.PlayerDashingState"
+PlayerAttackingState = require"Scripts.PlayerStates.PlayerAttackingState"
 
 local Player = Class{
     __includes = {Instance},
