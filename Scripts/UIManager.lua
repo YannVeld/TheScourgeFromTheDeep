@@ -32,6 +32,8 @@ local UIManager = Class{
         self.dashShader:send("frac", 1.0)
         self.bossHealthShader = love.graphics.newShader("Shaders/healthBarHorizontal.glsl")
         self.bossHealthShader:send("frac", 1.0)
+        self.bossHealthShader:send("rightBound", 0.97)
+        self.bossHealthShader:send("leftBound", 0.211)
     end,
 
     update = function(self, dt)
@@ -46,6 +48,8 @@ local UIManager = Class{
         bossHealthFrac = self.boss.health / Boss.health 
         bossHealthFrac = Lume.clamp(bossHealthFrac, 0.0, 1.0)
         self.bossHealthShader:send("frac", bossHealthFrac)
+        self.bossHealthShader:send("rightBound", 0.97)
+        self.bossHealthShader:send("leftBound", 0.211)
     end,
 
     draw = function(self)
