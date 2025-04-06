@@ -4,7 +4,7 @@ Enemy = require "Scripts.Enemy"
 local Barrel = Class{
     __includes = {Enemy},
 
-    health = 10.0,
+    health = 12.0,
     spriteSheet = Sprites.Barrel,
     animSpeed = 10,
 

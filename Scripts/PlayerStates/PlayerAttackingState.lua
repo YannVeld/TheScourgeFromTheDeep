@@ -5,7 +5,9 @@ AttackingState = Class{
     attackCooldown = 0.1,
 
     attack1HitFrames = {4,5},
+    attack2HitFrames = {9,10},
     attack1Damage = 5.0,
+    attack2Damage = 5.0,
 
     spriteSheet = Sprites.Knight_attack,
     animSpeed = 14,
@@ -23,19 +25,20 @@ AttackingState = Class{
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(AttackingState.spriteSheet, 32, 32, 0, 0)
         self.attackingAnimation = Animation(self.sprites, AttackingState.animSpeed, 1, false)
 
-        local halfSpriteSize = Vector( - self.sprites[1]:getWidth() / 2, - self.sprites[1]:getHeight() / 2 )
-        local attackRectangleRight1 = Rectangle(Vector(16,0) + halfSpriteSize, 14, 7)
-        attackRectangleRight1:setPosition(self.player.position + attackRectangleRight1.position)
-        local attackRectangleRight2 = Rectangle(Vector(22,7) + halfSpriteSize, 10, 18)
-        attackRectangleRight2:setPosition(self.player.position + attackRectangleRight2.position)
-        self.attack1ColliderRight = Collider({attackRectangleRight1,attackRectangleRight2}, self.player.position, "PlayerAttack", self.player)
+        local halfSpriteSize = Vector( self.sprites[1]:getWidth() / 2, self.sprites[1]:getHeight() / 2 )
+        local spriteOffset = Vector(AttackingState.spriteOffsetHor, AttackingState.spriteOffsetVer)
+        local colliderHeight = 26
+        local colliderWidth = 17
 
-        halfSpriteSize = Vector( - self.sprites[1]:getWidth() / 2, - self.sprites[1]:getHeight() / 2 )
-        local attackRectangleLeft1 = Rectangle(Vector(6,0) + halfSpriteSize, 14, 7)
-        attackRectangleLeft1:setPosition(self.player.position + attackRectangleLeft1.position)
-        local attackRectangleLeft2 = Rectangle(Vector(0,7) + halfSpriteSize, 10, 18)
-        attackRectangleLeft2:setPosition(self.player.position + attackRectangleLeft2.position)
-        self.attack1ColliderLeft = Collider({attackRectangleLeft1,attackRectangleLeft2}, self.player.position, "PlayerAttack", self.player)
+        local rightRectPos = self.player.position:clone()
+        rightRectPos.y = rightRectPos.y - halfSpriteSize.y - spriteOffset.y - colliderHeight/2 + 14
+        local attackRectangleRight = Rectangle(rightRectPos, colliderWidth, colliderHeight)
+        self.attackColliderRight = Collider({attackRectangleRight}, self.player.position, "PlayerAttack", self.player)
+
+        local leftRectPos = rightRectPos:clone()
+        leftRectPos.x = leftRectPos.x - colliderWidth
+        local attackRectangleLeft = Rectangle(leftRectPos, colliderWidth, colliderHeight)
+        self.attackColliderLeft = Collider({attackRectangleLeft}, self.player.position, "PlayerAttack", self.player)
     end,
 
     enter = function(self)
@@ -46,8 +49,9 @@ AttackingState = Class{
         self.player.velocity = Vector(0,0)
 
         self.attack1HitList = {}
-        self.attack1ColliderRight:setPosition(self.player.position)
-        self.attack1ColliderLeft:setPosition(self.player.position)
+        self.attack2HitList = {}
+        self.attackColliderRight:setPosition(self.player.position)
+        self.attackColliderLeft:setPosition(self.player.position)
 
         self.attackingAnimation:reset()
     end,
@@ -73,36 +77,56 @@ AttackingState = Class{
     end,
 
     doAttack1 = function(self)
-        if Lume.find(AttackingState.attack1HitFrames, self.attackingAnimation.curFrame) == nil then
-            self.attack1HitList = {}
-            return
+        local inAttack1 = false
+        local inAttack2 = false
+        if Lume.find(AttackingState.attack1HitFrames, self.attackingAnimation.curFrame) ~= nil then
+            inAttack1 = true
+        end
+        if Lume.find(AttackingState.attack2HitFrames, self.attackingAnimation.curFrame) ~= nil then
+            inAttack2 = true
         end
 
-        self.attack1ColliderRight:setPosition(self.player.position)
-        self.attack1ColliderLeft:setPosition(self.player.position)
+        -- Reset hit lists
+        if not inAttack1 then self.attack1HitList = {} end
+        if not inAttack2 then self.attack2HitList = {} end
 
+        -- Not attacking
+        if (not inAttack1) and (not inAttack2) then return end
+
+        -- Set colliders
+        self.attackColliderRight:setPosition(self.player.position)
+        self.attackColliderLeft:setPosition(self.player.position)
+
+        -- Get collisions
         local colls
         if self.player.lookDir > 0 then
-            colls = World:getCollisions(self.attack1ColliderRight)
+            colls = World:getCollisions(self.attackColliderRight)
         else
-            colls = World:getCollisions(self.attack1ColliderLeft)
+            colls = World:getCollisions(self.attackColliderLeft)
         end
 
+        -- Hit things
         local ii,coll
         for ii, coll in pairs(colls) do
-            if Lume.find(self.attack1HitList, coll) == nil then
-                self:hitAttack1(coll)
-                table.insert(self.attack1HitList, coll)
-            end
+            if inAttack1 then self:hitAttack1(coll) end
+            if inAttack2 then self:hitAttack2(coll) end
         end    
     end,
 
     hitAttack1 = function(self, other)
-        if other.type ~= "Enemy" then
-            return
-        end
+        if other.type ~= "Enemy" then return end
+        if Lume.find(self.attack1HitList, other) ~= nil then return end
 
+        table.insert(self.attack1HitList, other)
         other.instance:DoDamage(PlayerAttackingState.attack1Damage)
+    end,
+
+    hitAttack2 = function(self, other)
+        if other.type ~= "Enemy" then return end
+        if Lume.find(self.attack2HitList, other) ~= nil then return end
+
+        table.insert(self.attack2HitList, other)
+        other.instance:DoDamage(PlayerAttackingState.attack2Damage)
     end,
 
     update = function(self, dt)
@@ -141,8 +165,8 @@ AttackingState = Class{
                                      0, self.player.lookDir, 1, ox, oy)
                                      
         --love.graphics.setColor(Colors.blue)
-        --self.attack1ColliderRight:draw()
-        --self.attack1ColliderLeft:draw()
+        --self.attackColliderRight:draw()
+        --self.attackColliderLeft:draw()
         --love.graphics.setColor(Colors.white)
     end,
 }
