@@ -14,7 +14,7 @@ BossIdleState = Class{
     end,
 
     enter = function(self)
-        self.velocity = Vector(0,0)
+        self.boss.velocity = Vector(0,0)
     end,
 
     update = function(self, dt)
