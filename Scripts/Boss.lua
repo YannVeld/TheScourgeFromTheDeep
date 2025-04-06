@@ -52,10 +52,27 @@ local Boss = Class{
         self.getHitShader:send("frac", 0.0)
 
         self.collisionTypes = {"BossGameEdge", "PlayerCollider"}
+
+
+        -- Sounds
+        self.fireSwordSound = love.audio.newSource("Sounds/Grunt1.wav", "static")
+        self.fireSwordSound:setVolume(SoundsVolume)
+        self.fireBreathSound = love.audio.newSource("Sounds/Grunt3.wav", "static")
+        self.fireBreathSound:setVolume(SoundsVolume)
+        self.hurtSound1 = love.audio.newSource("Sounds/HurtBoss.wav", "static")
+        self.hurtSound1:setVolume(SoundsVolume)
+        self.hurtSound2 = love.audio.newSource("Sounds/HurtBoss2.wav", "static")
+        self.hurtSound2:setVolume(SoundsVolume)
+        self.stompSound = love.audio.newSource("Sounds/Stomp.wav", "static")
+        self.stompSound:setVolume(SoundsVolume)
     end,
 
     DoDamage = function(self, amount, origin, knockback)
         self:TakeDamage(amount)
+
+        local snd = Lume.randomchoice({self.hurtSound1, self.hurtSound2})
+        snd:setPitch(love.math.random(0.95, 1.05))
+        snd:play()
     end,
 
     checkDead = function(self)

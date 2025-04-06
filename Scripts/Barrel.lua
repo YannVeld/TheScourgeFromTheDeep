@@ -36,12 +36,18 @@ local Barrel = Class{
         self.getHitShader:send("frac", 0.0)
 
         self.collisionTypes = {"GameEdge", "Enemy", "PlayerCollider"}
+
+        -- Sounds
+        self.hurtSound = love.audio.newSource("Sounds/HitBarrel.wav", "static")
+        self.hurtSound:setVolume(SoundsVolume)
     end,
 
     DoDamage = function(self, amount, origin, knockback)
         if knockback == nil then knockback = 0 end
 
         self:TakeDamage(amount)
+
+        self.hurtSound:play()
 
         local vecFromOrigin = origin - self.position
         self.velocity = self.velocity - vecFromOrigin:normalized() * knockback

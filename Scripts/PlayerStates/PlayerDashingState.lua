@@ -30,6 +30,8 @@ DashingState = Class{
         else
             self.player.velocity = self.player.velocity:normalized() * DashingState.dashSpeed
         end
+
+        self.player.dashSound:play()
     end,
 
     checkEndDash = function(self)

@@ -59,6 +59,14 @@ local Player = Class{
 
         self.damagedTime = -10
         self.time = 0
+
+        -- Sounds
+        self.hurtSound = love.audio.newSource("Sounds/HurtPlayer.wav", "static")
+        self.hurtSound:setVolume(SoundsVolume)
+        self.swordSound = love.audio.newSource("Sounds/SwordSwing.wav", "static")
+        self.swordSound:setVolume(SoundsVolume + 2)
+        self.dashSound = love.audio.newSource("Sounds/Dash.wav", "static")
+        self.dashSound:setVolume(SoundsVolume + 2)
     end,
 
     setPosition = function(self, position)
@@ -195,6 +203,10 @@ local Player = Class{
 
         -- Screen shake
         Shack:setShake(Player.getHitShakeMagnitude)
+
+        -- Sound
+        self.hurtSound:setPitch(love.math.random(0.98, 1.02))
+        self.hurtSound:play()
 
         -- For damaged shader
         self:TakeDamage(amount)

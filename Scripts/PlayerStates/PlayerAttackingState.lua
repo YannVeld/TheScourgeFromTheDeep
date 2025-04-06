@@ -58,6 +58,13 @@ AttackingState = Class{
         self.attackingAnimation:reset()
     end,
 
+    doAttackSound = function(self)
+        if (self.attackingAnimation.curFrame == 4) or (self.attackingAnimation.curFrame == 9) then
+            self.player.swordSound:setPitch(love.math.random(0.95, 1.05))
+            self.player.swordSound:play()
+        end
+    end,   
+
     checkAttackStage = function(self)
         if self.attackingAnimation.curFrame <= AttackingState.attack1EndFrame then
             return 1
@@ -133,6 +140,7 @@ AttackingState = Class{
 
     update = function(self, dt)
         self.attackingAnimation:update(dt)
+        self:doAttackSound()
 
         self:doAttack1()
 

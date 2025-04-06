@@ -22,6 +22,7 @@ BossFireBreathState = Class{
         self.canAttack = true
         self.timeSinceExit = 0
         self.didFire = false
+        self.playedSound = false
 
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(BossFireBreathState.spriteSheet, 96, 96, 0, 0)
         self.attackingAnimation = Animation(self.sprites, BossFireBreathState.animSpeed, 1, false)
@@ -44,11 +45,21 @@ BossFireBreathState = Class{
         self.timeSinceEnter = 0
         self.attackEnded = false
         self.didFire = false
+        self.playedSound = false
         
         self.boss.velocity = Vector(0,0)
 
         self.attackingAnimation:reset()
     end,
+
+    doAttackSound = function(self)
+        if self.playedSound then return end
+
+        if self.attackingAnimation.curFrame >= 6 then
+            self.boss.fireBreathSound:play()
+            self.playedSound = true
+        end
+    end,   
 
     doAttack = function(self)
         if not (self.attackingAnimation.curFrame == BossFireBreathState.shootFireballFrame) then
@@ -89,6 +100,7 @@ BossFireBreathState = Class{
 
     update = function(self, dt)
         self.attackingAnimation:update(dt)
+        self:doAttackSound()
 
         self:faceThePlayer()
 

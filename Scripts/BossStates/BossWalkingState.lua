@@ -21,6 +21,13 @@ BossWalkingState = Class{
         self.hasArrived = false
     end,
 
+
+    doWalkSound = function(self)
+        if (self.runningAnimation.curFrame == 2) or (self.runningAnimation.curFrame == 5) then
+            self.boss.stompSound:play()
+        end
+    end,   
+
     move = function(self, dt)
         local dirVector = (self.boss.targetPosition - self.boss.position):normalized()
         self.boss.velocity = dirVector * BossWalkingState.moveSpeed
@@ -35,6 +42,7 @@ BossWalkingState = Class{
 
     update = function(self, dt)
         self.runningAnimation:update(dt)
+        self:doWalkSound()
         self:move(dt)
     end,
     

@@ -20,6 +20,7 @@ BossFireSwordState = Class{
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(BossFireSwordState.spriteSheet, 128, 128, 0, 0)
         self.attackingAnimation = Animation(self.sprites, BossFireSwordState.animSpeed, 1, false)
 
+        self.playedSound = false
 
         self:createCollider()
     end,
@@ -56,6 +57,7 @@ BossFireSwordState = Class{
         self.canAttack = false
         self.timeSinceEnter = 0
         self.attackEnded = false
+        self.playedSound = false
 
         self.boss.velocity = Vector(0,0)
 
@@ -65,6 +67,15 @@ BossFireSwordState = Class{
 
         self.attackingAnimation:reset()
     end,
+
+    doAttackSound = function(self)
+        if self.playedSound then return end
+
+        if self.attackingAnimation.curFrame >= 7 then
+            self.boss.fireSwordSound:play()
+            self.playedSound = true
+        end
+    end,   
 
     checkAttackStage = function(self)
         if self.attackingAnimation.animationDone then
@@ -140,6 +151,7 @@ BossFireSwordState = Class{
 
     update = function(self, dt)
         self.attackingAnimation:update(dt)
+        self:doAttackSound()
 
         self:doAttack()
 

@@ -22,6 +22,8 @@ local windowWidth, windowHeight = 1920, 1080
 
 local backgroundSprite = Sprites.Background
 
+SoundsVolume = 5
+
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})
     Shack:setDimensions(Push:getDimensions())
