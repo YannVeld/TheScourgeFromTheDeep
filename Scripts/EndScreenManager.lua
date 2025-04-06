@@ -37,29 +37,50 @@ local EndScreenManager = Class{
     showEndScreen = function(self, win)
         if self.endTime > 0.0 then return end
 
+        Shack:setShake(0)
         self.win = win
         self.endTime = self.gameTime
     end,
 
-    draw = function(self)
-        local textx = Push:getWidth() / 2
-        local texty = Push:getHeight() / 2
+    getTimeInMinutes = function(time)
+        local mins = time / 60
+        mins = Lume.round(mins, .1)
+        return mins
+    end,
+
+    drawUI = function(self)
+        local font = love.graphics.getFont()
+        local texty = Push:getHeight() / 2 - 50
 
         local backgroundColor = Lume.clone(Colors.black)
         backgroundColor[4] = self.alpha
         local textColor = Lume.clone(Colors.white)
         textColor[4] = self.alpha
 
+        -- Background
         love.graphics.setColor(backgroundColor)
-
         love.graphics.rectangle("fill", -20, -20, Push:getWidth()+40, Push:getHeight()+40) 
 
+        -- Message to player
         love.graphics.setColor(textColor)
+        local lines
         if self.win then
-            love.graphics.print("You Win!", textx, texty)
+            lines = {"You Win!", "Thank you for playing!", "", "Press R to restart"}
         else
-            love.graphics.print("You Lose!\n Press R to restart", textx, texty)
+            lines = {"You are dead!", "", "", "Press R to restart"}
         end
+       
+        for ii,str in pairs(lines) do
+            local strWidth = font:getWidth(str)
+            love.graphics.print(str, Push:getWidth()/2 - strWidth/2, texty + ii*10)
+        end
+    
+        -- Game time
+        local time = self.getTimeInMinutes(self.endTime)
+        str = "Game Time: "..time.." minutes"
+        strWidth = font:getWidth(str)
+
+        love.graphics.print(str, Push:getWidth()/2 - strWidth/2, Push:getHeight() - 30)
 
         love.graphics.setColor(Colors.white)
     

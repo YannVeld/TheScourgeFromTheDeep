@@ -1,5 +1,6 @@
 require("Packages")
 Sprites = require("Sprites")
+require("Fonts")
 
 local InstanceManager = require "Packages.YannUtil.InstanceManager"
 require "Scripts.Collisions.Rectangle"
@@ -32,6 +33,10 @@ function love.load()
     camera = Camera()
     Gamestate.registerEvents()
     Gamestate.switch(initialGameState)
+
+    -- Setup font
+    Fonts.m3x6:setLineHeight(0.7)
+    love.graphics.setFont(Fonts.m3x6)
 end
 
 function love.update(dt)
