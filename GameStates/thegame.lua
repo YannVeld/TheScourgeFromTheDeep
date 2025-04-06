@@ -10,7 +10,7 @@ local player
 
 function thegame:enter()
     player = Player(Vector(50, 50))
-    boss = Boss(Vector(150, 50))
+    boss = Boss(Vector(150, 50), player)
 
     barrel1 = Barrel(Vector(64, 80))
     barrel2 = Barrel(Vector(20, 96))

@@ -2,6 +2,7 @@ Instance = require "Packages.YannUtil.Instance"
 Enemy = require "Scripts.Enemy"
 
 BossIdleState = require"Scripts.BossStates.BossIdleState"
+BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 
 local Boss = Class{
     __includes = {Enemy},
@@ -10,20 +11,28 @@ local Boss = Class{
     speedStopCutoff = 10.0,
     zorderPosOffset = 0,
 
-    shadowRadiusx = 16,
-    shadowRadiusy = 8,
+    startWalkDistance = 10,
+
+    shadowRadiusx = 22,
+    shadowRadiusy = 6,
     shadowOffsety = 2,
 
     getHitEffectDuration = 0.3,
 
-    init = function(self, position)
+    init = function(self, position, playerInstance)
         Enemy.init(self, position, Boss.health)
+        self.player = playerInstance
 
         self.position = position
         self.velocity = Vector(0.0, 0.0)
         self.lookDir = 1
 
+        self.targetPosition = self.position
+
         self.idleState = BossIdleState(self)
+        self.walkingState = BossWalkingState(self)
+
+        self.timeUntilDecision = 0
 
         self.state = self.idleState
 
@@ -49,6 +58,12 @@ local Boss = Class{
     end,
 
     changeState = function(self)
+        --local distToTarget = self.position:dist(self.targetPosition)
+        --if distToTarget > Boss.startWalkDistance then
+        if not self.walkingState.hasArrived then
+            return self.walkingState
+        end
+
         return self.idleState
 
         --local speed = self.velocity:len()
@@ -81,6 +96,19 @@ local Boss = Class{
 
         --return self.idleState
     end,
+
+    doBossAI = function(self, dt)
+        self.timeUntilDecision = self.timeUntilDecision - dt
+        if self.timeUntilDecision > 0 then return end
+
+        xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
+        ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
+        newpos = Vector(xpos, ypos)
+
+        self.targetPosition = newpos
+        self.timeUntilDecision = 10
+    end,
+
 
     resolveMovementObstructions = function(self, moveStep)
         -- Diagonal
@@ -121,7 +149,7 @@ local Boss = Class{
         end
 
         if math.abs(self.velocity.x) > 0 then
-            self.lookDir = Lume.sign( self.velocity.x )
+            self.lookDir = - Lume.sign( self.velocity.x )
         end
 
         local moveStep = self.velocity * dt
@@ -135,8 +163,10 @@ local Boss = Class{
 
         self:checkDead()
 
-        --self.dashingState:passiveUpdate(dt)
+        self.walkingState:passiveUpdate(dt)
         --self.attackingState:passiveUpdate(dt)
+
+        self:doBossAI(dt)
 
         local newState = self:changeState()
         if newState ~= self.state then
@@ -180,6 +210,10 @@ local Boss = Class{
         --self.collider:draw()
         --love.graphics.setColor(Colors.white)
         --love.graphics.ellipse("fill", self.position.x, self.position.y, 5, 5)
+        
+        --love.graphics.setColor(Colors.red)
+        --love.graphics.ellipse("fill", self.targetPosition.x, self.targetPosition.y, 5, 5)
+        --love.graphics.setColor(Colors.white)
     end,
 }
 
