@@ -47,6 +47,10 @@ function thegame:update(dt)
 
     if player.isDead then
         endScreenManager:showEndScreen(false)
+
+        if endScreenManager.alpha >= 1 then
+            boss:destroySelf()
+        end
     end
     if boss.isDead then
         endScreenManager:showEndScreen(true)

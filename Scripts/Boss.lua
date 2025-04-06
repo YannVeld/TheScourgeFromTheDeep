@@ -75,10 +75,14 @@ local Boss = Class{
         snd:play()
     end,
 
+    destroySelf = function(self)
+        World:remove(self.collider)
+        self:destroy()
+    end,
+
     checkDead = function(self)
         if self.isDead then
-            World:remove(self.collider)
-            self:destroy()
+            self:destroySelf()
         end
     end,
 

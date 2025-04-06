@@ -2,7 +2,7 @@
 BossFireSwordState = Class{
 
     attackCooldown = 2.0,
-    attackHitFrames = {10,11},
+    attackHitFrames = {11},
     attackDamage = 20.0,
     attackKnockback = 300,
 
