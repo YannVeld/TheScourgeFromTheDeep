@@ -10,6 +10,7 @@ ColliderWorld = Class{
 
     remove = function(self, collider)
         local index = Lume.find(self.colliders, collider)
+        if index == nil then return end
         table.remove(self.colliders, index)
     end,
 

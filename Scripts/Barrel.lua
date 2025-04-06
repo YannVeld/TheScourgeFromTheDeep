@@ -33,6 +33,7 @@ local Barrel = Class{
 
     checkDead = function(self)
         if self.isDead then
+            World:remove(self.collider)
             self.animationSpeed = Barrel.animSpeed
             self.breakingAnimation:setAnimationSpeed(self.animationSpeed)
         end
@@ -47,7 +48,6 @@ local Barrel = Class{
         self.breakingAnimation:update(dt)
 
         if self.breakingAnimation.animationDone then
-            World:remove(self.collider)
             self:destroy()
         end
 
