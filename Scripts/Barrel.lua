@@ -47,6 +47,7 @@ local Barrel = Class{
         self.breakingAnimation:update(dt)
 
         if self.breakingAnimation.animationDone then
+            World:remove(self.collider)
             self:destroy()
         end
 

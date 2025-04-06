@@ -17,10 +17,10 @@ local Player = Class{
     shadowRadiusy = 3,
     shadowOffsety = 9,
 
-    init = function(self)
+    init = function(self, position)
         Instance.init(self)
 
-        self.position = Vector(50.0, 50.0)
+        self.position = position
         self.velocity = Vector(0.0, 0.0)
         self.lookDir = 1
 
@@ -161,6 +161,7 @@ local Player = Class{
         --love.graphics.setColor(Colors.blue)
         --self.collider:draw()
         --love.graphics.setColor(Colors.white)
+        --love.graphics.ellipse("fill", self.position.x, self.position.y, 5, 5)
     end,
 
     keypressed = function(self, key, scancode, isrepeat)

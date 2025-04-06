@@ -9,7 +9,8 @@ ColliderWorld = Class{
     end,
 
     remove = function(self, collider)
-        table.remove(self.colliders, collider)
+        local index = Lume.find(self.colliders, collider)
+        table.remove(self.colliders, index)
     end,
 
     checkCollision = function(self, collider)

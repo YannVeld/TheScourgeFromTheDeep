@@ -1,5 +1,6 @@
 
 Player = require("Scripts/Player")
+Boss = require("Scripts/Boss")
 Barrel = require("Scripts/Barrel")
 
 
@@ -8,7 +9,8 @@ local thegame = {}
 local player
 
 function thegame:enter()
-    player = Player()
+    player = Player(Vector(50, 50))
+    boss = Boss(Vector(150, 50))
 
     barrel1 = Barrel(Vector(64, 80))
     barrel2 = Barrel(Vector(20, 96))
