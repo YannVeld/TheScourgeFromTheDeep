@@ -47,7 +47,7 @@ local Player = Class{
         self.collider = Collider({myColliderRect}, self.position, "PlayerCollider", self)
         World:add(self.collider)
 
-        local myHitBoxRect = Rectangle(self.position:clone() - Vector(4,8), 8, 18)
+        local myHitBoxRect = Rectangle(self.position:clone() - Vector(3,7), 6, 14)
         self.hitbox = Collider({myHitBoxRect}, self.position, "Player", self)
         World:add(self.hitbox)
 
@@ -183,10 +183,9 @@ local Player = Class{
     DoDamage = function(self, amount, origin, knockback)
         if knockback == nil then knockback = 0 end
 
-        -- Dont get hit when dashing
-        if self.state == self.dashingState then
-            return
-        end
+        -- Dont get hit when dashing or being knocked back
+        if self.state == self.dashingState then return end
+        if self.state == self.knockbackState then return end
 
         -- Knockback
         local vecFromOrigin = origin - self.position
@@ -225,10 +224,10 @@ local Player = Class{
 
     doGetHitEffect = function(self)
         local frac = 1.0 - (self.time - self.damagedTime) / Player.getHitEffectDuration
+        if frac < 0.0 then frac = 0.0 end
+        if frac > 1.0 then frac = 1.0 end
 
-        if (frac >= 0.0) and (frac <= 1.0) then
-            self.getHitShader:send("frac", frac)
-        end
+        self.getHitShader:send("frac", frac)
     end,
 
     draw = function(self)
@@ -243,7 +242,7 @@ local Player = Class{
         love.graphics.setColor(Colors.white)
 
         --love.graphics.setColor(Colors.blue)
-        --self.collider:draw()
+        ----self.collider:draw()
         --self.hitbox:draw()
         --love.graphics.setColor(Colors.white)
         --love.graphics.ellipse("fill", self.position.x, self.position.y, 5, 5)

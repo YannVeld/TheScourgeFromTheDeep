@@ -22,7 +22,7 @@ local Fireball = Class{
 
         self.hitList = {}
 
-        local collSize = 16
+        local collSize = 10
         local myRect = Rectangle(self.position - Vector(collSize/2, collSize/2), collSize, collSize)
         self.collider = Collider({myRect}, self.position, "Projectile", self)
     end,

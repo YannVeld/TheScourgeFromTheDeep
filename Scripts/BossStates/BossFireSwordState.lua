@@ -172,8 +172,11 @@ BossFireSwordState = Class{
                                      0, -self.boss.lookDir, 1, ox, oy)
                                      
         --love.graphics.setColor(Colors.red)
-        --self.attackColliderRight:draw()
-        --self.attackColliderLeft:draw()
+        --if self.boss.lookDir == 1 then
+        --    self.attackColliderRight:draw()
+        --else
+        --    self.attackColliderLeft:draw()
+        --end
         --love.graphics.setColor(Colors.white)
     end,
 }

@@ -4,7 +4,7 @@ DashingState = Class{
     dashSpeed = 300, 
     exitSpeed = 200,
     dashDistance = 64,
-    dashCooldown = 1,
+    dashCooldown = 0.5,
 
     sprite = Sprites.Knight_dash,
     spriteOffsetHor = -1,
@@ -57,6 +57,10 @@ DashingState = Class{
             self.canDash = true
         else
             self.timeSinceExit = self.timeSinceExit + dt
+        end
+
+        if not self.canDash then
+            self.player.inputManager:resetDashPress()
         end
     end,
 

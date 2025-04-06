@@ -137,10 +137,10 @@ local Barrel = Class{
 
     doGetHitEffect = function(self)
         local frac = 1.0 - (self.time - self.damagedTime) / Barrel.getHitEffectDuration
+        if frac < 0.0 then frac = 0.0 end
+        if frac > 1.0 then frac = 1.0 end
 
-        if (frac >= 0.0) and (frac <= 1.0) then
-            self.getHitShader:send("frac", frac)
-        end
+        self.getHitShader:send("frac", frac)
     end,
 
     draw = function(self)
