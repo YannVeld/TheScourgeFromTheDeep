@@ -72,7 +72,9 @@ local Boss = Class{
         local playerSide = Lume.sign( vecToPlayer.x )
         local lookingAtPlayer = playerSide == self.lookDir
 
-        if (distToPlayer < 50) and lookingAtPlayer and self.fireSwordState.canAttack then
+        local playerInRange = self.fireSwordState:checkPlayerInRange()
+
+        if playerInRange and lookingAtPlayer and self.fireSwordState.canAttack then
             return self.fireSwordState
         end
 
@@ -228,7 +230,7 @@ local Boss = Class{
         self.state:draw()
         love.graphics.setShader()
 
-        love.graphics.setColor(Colors.white)
+        love.graphics.setColor(Colors.red)
         love.graphics.print(self.health, 5, 5)
         love.graphics.setColor(Colors.white)
 

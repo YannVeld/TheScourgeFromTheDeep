@@ -11,6 +11,8 @@ PlayerKnockbackState = require"Scripts.PlayerStates.PlayerKnockbackState"
 local Player = Class{
     __includes = {Instance},
 
+    health = 100,
+
     speedStopCutoff = 10.0,
     zorderPosOffset = 6,
 
@@ -22,6 +24,9 @@ local Player = Class{
 
     init = function(self, position)
         Instance.init(self)
+
+        self.health = Player.health
+        self.isDead = false
 
         self.position = position
         self.velocity = Vector(0.0, 0.0)
@@ -151,14 +156,28 @@ local Player = Class{
         self:setPosition(newPos)
     end,
 
+    checkDead = function(self)
+        if self.isDead then
+            World:remove(self.collider)
+            self:destroy()
+        end
+    end,
+
+    TakeDamage = function(self, amount)
+        self.health = self.health - amount
+        self.damagedTime = self.time
+
+        if self.health <= 0 then
+            self.health = 0
+            self.isDead = true
+        end
+    end,
+
     DoDamage = function(self, amount, origin)
         -- Dont get hit when dashing
         if self.state == self.dashingState then
             return
         end
-
-        print("Hit!")
-        print(amount)
 
         -- Knockback
         local vecFromOrigin = origin - self.position
@@ -166,12 +185,14 @@ local Player = Class{
         self:changeState(self.knockbackState)
 
         -- For damaged shader
-        self.damagedTime = self.time
+        self:TakeDamage(amount)
     end,
 
     update = function(self, dt)
         self.time = self.time + dt
         self:doGetHitEffect()
+        self:checkDead()
+
         self.inputManager:update(dt)
         self.dashingState:passiveUpdate(dt)
         self.attackingState:passiveUpdate(dt)
@@ -208,6 +229,9 @@ local Player = Class{
         self.state:draw()
         love.graphics.setShader()
 
+        love.graphics.setColor(Colors.green)
+        love.graphics.print(self.health, Push:getWidth()-30, 5)
+        love.graphics.setColor(Colors.white)
 
         --love.graphics.setColor(Colors.blue)
         --self.collider:draw()

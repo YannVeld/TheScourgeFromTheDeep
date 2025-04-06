@@ -113,6 +113,30 @@ BossFireSwordState = Class{
         other.instance:DoDamage(BossFireSwordState.attackDamage, self.boss.position)
     end,
 
+    checkPlayerInRange = function(self)
+        -- Set colliders
+        self.attackColliderRight:setPosition(self.boss.position)
+        self.attackColliderLeft:setPosition(self.boss.position)
+
+        -- Get collisions
+        local colls
+        if self.boss.lookDir > 0 then
+            colls = World:getCollisions(self.attackColliderRight)
+        else
+            colls = World:getCollisions(self.attackColliderLeft)
+        end
+
+        -- Check if player is in range
+        local ii,coll
+        for ii, coll in pairs(colls) do
+            if coll.type == "Player" then
+                return true
+            end
+        end    
+
+        return false
+    end,
+
     update = function(self, dt)
         self.attackingAnimation:update(dt)
 
