@@ -44,7 +44,7 @@ BossFireBreathState = Class{
         self.timeSinceEnter = 0
         self.attackEnded = false
         self.didFire = false
-
+        
         self.boss.velocity = Vector(0,0)
 
         self.attackingAnimation:reset()

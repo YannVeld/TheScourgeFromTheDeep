@@ -1,6 +1,8 @@
 Instance = require "Packages.YannUtil.Instance"
 Enemy = require "Scripts.Enemy"
 
+BossAI = require "Scripts.BossAI"
+
 BossIdleState = require"Scripts.BossStates.BossIdleState"
 BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
@@ -21,8 +23,6 @@ local Boss = Class{
 
     getHitEffectDuration = 0.3,
 
-    bossActions = {walk=1, chase=2, firebreath=3},
-
     init = function(self, position, playerInstance)
         Enemy.init(self, position, Boss.health)
         self.player = playerInstance
@@ -41,7 +41,7 @@ local Boss = Class{
         self.timeUntilDecision = 0
 
         self.state = self.idleState
-        self.AIAction = 1
+        self.AI = BossAI(self, self.player)
 
         local myColliderRect = Rectangle(Vector(0,0), 32, 8)
         myColliderRect:setPosition(self.position - Vector(16,4))
@@ -88,69 +88,8 @@ local Boss = Class{
         local isFireBreath = (self.state == self.fireBreathState) and (not self.fireBreathState.attackEnded)
         if isFireBreath then return self.fireBreathState end
 
-        local vecToPlayer = self.player.position - self.position
-        local distToPlayer = vecToPlayer:len()
-        local playerSide = Lume.sign( vecToPlayer.x )
-        local lookingAtPlayer = playerSide == self.lookDir
-
-        local playerInRange = self.fireSwordState:checkPlayerInRange()
-
-        if playerInRange and lookingAtPlayer and self.fireSwordState.canAttack then
-            return self.fireSwordState
-        end
-
-        
-        if not self.walkingState.hasArrived then
-            return self.walkingState
-        end
-
-        return self.idleState
+        return self.AI.requestedState
     end,
-
-    doBossAI = function(self, dt)
-        self.timeUntilDecision = self.timeUntilDecision - dt
-
-        if self.AIAction == Boss.bossActions.chase then
-            self.targetPosition = self.player.position
-        end
-
-        if self.timeUntilDecision > 0 then return end
-        if self.state == self.fireSwordState then return end
-
-        --local action = Lume.randomchoice(Boss.bossActions)
-        self.AIAction = Lume.randomchoice({1,2,3})
-        --self.AIAction = 3
-
-        if self.AIAction == Boss.bossActions.walk then
-            print("Walking")
-            xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
-            ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
-            newpos = Vector(xpos, ypos)
-            self.targetPosition = newpos
-
-            self.timeUntilDecision = 1
-        end
-
-        if self.AIAction == Boss.bossActions.chase then
-            print("Chasing")
-            self.targetPosition = self.player.position
-            self.timeUntilDecision = 4
-        end
-
-        if self.AIAction == Boss.bossActions.firebreath then
-            print("Firebreath")
-            self:changeState(self.fireBreathState)
-            self.timeUntilDecision = 2
-        end
-
-        -- Follow mouse
-        --local mouseX, mouseY = love.mouse.getPosition()
-        --mouseX, mouseY = Push:toGame(mouseX, mouseY)
-        --if (mouseX ~= nil) or (mouseY ~= nil) then
-        --    self.targetPosition = Vector(mouseX, mouseY)
-        --end
-    end,
-
 
     resolveMovementObstructions = function(self, moveStep)
         -- Diagonal
@@ -209,7 +148,7 @@ local Boss = Class{
         self.fireSwordState:passiveUpdate(dt)
         self.fireBreathState:passiveUpdate(dt)
 
-        self:doBossAI(dt)
+        self.AI:update(dt)
 
         local newState = self:getState()
         self:changeState(newState)
