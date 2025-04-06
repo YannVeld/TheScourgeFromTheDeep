@@ -3,6 +3,7 @@ Enemy = require "Scripts.Enemy"
 
 BossIdleState = require"Scripts.BossStates.BossIdleState"
 BossWalkingState = require"Scripts.BossStates.BossWalkingState"
+BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
 
 local Boss = Class{
     __includes = {Enemy},
@@ -31,6 +32,7 @@ local Boss = Class{
 
         self.idleState = BossIdleState(self)
         self.walkingState = BossWalkingState(self)
+        self.fireSwordState = BossFireSwordState(self)
 
         self.timeUntilDecision = 0
 
@@ -58,8 +60,19 @@ local Boss = Class{
     end,
 
     changeState = function(self)
-        --local distToTarget = self.position:dist(self.targetPosition)
-        --if distToTarget > Boss.startWalkDistance then
+        local isFireSword = (self.state == self.fireSwordState) and (not self.fireSwordState.attackEnded)
+        if isFireSword then return self.fireSwordState end
+
+        local vecToPlayer = self.player.position - self.position
+        local distToPlayer = vecToPlayer:len()
+        local playerSide = Lume.sign( vecToPlayer.x )
+        local lookingAtPlayer = playerSide == self.lookDir
+
+        if (distToPlayer < 50) and lookingAtPlayer and self.fireSwordState.canAttack then
+            return self.fireSwordState
+        end
+
+        
         if not self.walkingState.hasArrived then
             return self.walkingState
         end
@@ -101,11 +114,20 @@ local Boss = Class{
         self.timeUntilDecision = self.timeUntilDecision - dt
         if self.timeUntilDecision > 0 then return end
 
+
+        -- Follow mouse
+        --local mouseX, mouseY = love.mouse.getPosition()
+        --mouseX, mouseY = Push:toGame(mouseX, mouseY)
+        --if (mouseX ~= nil) or (mouseY ~= nil) then
+        --    self.targetPosition = Vector(mouseX, mouseY)
+        --end
+
+        
         xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
         ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
         newpos = Vector(xpos, ypos)
-
         self.targetPosition = newpos
+
         self.timeUntilDecision = 10
     end,
 
@@ -149,7 +171,7 @@ local Boss = Class{
         end
 
         if math.abs(self.velocity.x) > 0 then
-            self.lookDir = - Lume.sign( self.velocity.x )
+            self.lookDir = Lume.sign( self.velocity.x )
         end
 
         local moveStep = self.velocity * dt
@@ -164,7 +186,7 @@ local Boss = Class{
         self:checkDead()
 
         self.walkingState:passiveUpdate(dt)
-        --self.attackingState:passiveUpdate(dt)
+        self.fireSwordState:passiveUpdate(dt)
 
         self:doBossAI(dt)
 

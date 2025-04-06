@@ -39,7 +39,7 @@ BossWalkingState = Class{
     end,
     
     passiveUpdate = function(self, dt)
-        if self.boss.state == self.boss.walkingState then return end
+        if self.boss.state == self then return end
 
         local distToTarget = self.boss.position:dist(self.boss.targetPosition)
         if distToTarget > BossWalkingState.moveSpeed * dt then
@@ -51,14 +51,14 @@ BossWalkingState = Class{
 
     exit = function(self)
         local playerPos = self.boss.player.position
-        self.boss.lookDir = Lume.sign( self.boss.position.x - playerPos.x )
+        self.boss.lookDir = Lume.sign( playerPos.x - self.boss.position.x )
     end,
 
     draw = function(self)
         local ox = self.sprites[1]:getWidth() / 2 + BossWalkingState.spriteOffsetHor
         local oy = self.sprites[1]:getHeight() / 2 + BossWalkingState.spriteOffsetVer
         self.runningAnimation:draw(self.boss.position.x, self.boss.position.y, 
-                                   0, self.boss.lookDir, 1, ox, oy)
+                                   0, -self.boss.lookDir, 1, ox, oy)
     end,
 }
 

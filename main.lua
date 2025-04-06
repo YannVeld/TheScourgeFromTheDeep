@@ -12,7 +12,9 @@ local initialGameState = Gamestate_thegame
 local camera, instanceManager
 
 
-local gameWidth, gameHeight = 480, 270
+local gameWidth, gameHeight = 240, 135
+--local gameWidth, gameHeight = 480, 270
+
 --local windowWidth, windowHeight = 960, 540
 --local windowWidth, windowHeight = 1440, 810
 local windowWidth, windowHeight = 1920, 1080

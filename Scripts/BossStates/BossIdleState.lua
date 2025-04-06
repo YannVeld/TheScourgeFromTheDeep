@@ -27,7 +27,8 @@ BossIdleState = Class{
         local ox = self.sprites[1]:getWidth() / 2 + BossIdleState.spriteOffsetHor
         local oy = self.sprites[1]:getHeight() / 2 + BossIdleState.spriteOffsetVer
         self.idleAnimation:draw(self.boss.position.x, self.boss.position.y, 
-                                0, self.boss.lookDir, 1, ox, oy)
+                                0, -self.boss.lookDir, 1, ox, oy)
+
     end,
 }
 

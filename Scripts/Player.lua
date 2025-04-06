@@ -127,6 +127,11 @@ local Player = Class{
         self:setPosition(newPos)
     end,
 
+    DoDamage = function(self, amount)
+        print("Hit!")
+        print(amount)
+    end,
+
     update = function(self, dt)
         self.inputManager:update(dt)
         self.dashingState:passiveUpdate(dt)
