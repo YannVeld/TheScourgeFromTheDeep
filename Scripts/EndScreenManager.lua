@@ -43,9 +43,11 @@ local EndScreenManager = Class{
     end,
 
     getTimeInMinutes = function(time)
-        local mins = time / 60
-        mins = Lume.round(mins, .1)
-        return mins
+        local mins = math.floor(time / 60)
+        local secs = time - mins * 60
+
+        secs = math.floor(secs)
+        return {mins, secs}
     end,
 
     drawUI = function(self)
@@ -77,7 +79,10 @@ local EndScreenManager = Class{
     
         -- Game time
         local time = self.getTimeInMinutes(self.endTime)
-        str = "Game Time: "..time.." minutes"
+        local mins = time[1]
+        local secs = time[2]
+
+        str = "Game Time: "..mins.." mins. and "..secs.." secs."
         strWidth = font:getWidth(str)
 
         love.graphics.print(str, Push:getWidth()/2 - strWidth/2, Push:getHeight() - 30)
