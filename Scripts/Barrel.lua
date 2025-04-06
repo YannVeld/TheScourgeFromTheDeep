@@ -13,6 +13,8 @@ local Barrel = Class{
     shadowOffsetx = -0.5,
     shadowOffsety = 4,
 
+    getHitEffectDuration = 0.3,
+
     init = function(self, position)
         Enemy.init(self, position, Barrel.health)
 
@@ -24,6 +26,9 @@ local Barrel = Class{
         local myRect = Rectangle(rectPos, 7, 5)
         self.collider = Collider({myRect}, self.position, "Enemy", self)
         World:add(self.collider)
+
+        self.getHitShader = love.graphics.newShader("Shaders/hitEffect.glsl")
+        self.getHitShader:send("frac", 0.0)
     end,
 
     checkDead = function(self)
@@ -34,6 +39,7 @@ local Barrel = Class{
     end,
 
     update = function(self, dt)
+        self:doGetHitEffect()
         Enemy.update(self, dt)
 
         self:checkDead()
@@ -53,12 +59,24 @@ local Barrel = Class{
         love.graphics.setColor(Colors.white)
     end,
 
+    doGetHitEffect = function(self)
+        local frac = 1.0 - (self.time - self.damagedTime) / Barrel.getHitEffectDuration
+
+        if (frac >= 0.0) and (frac <= 1.0) then
+            self.getHitShader:send("frac", frac)
+        end
+    end,
+
     draw = function(self)
         self:drawShadow()
+
+        love.graphics.setShader(self.getHitShader)
 
         local ox = self.sprites[1]:getWidth() / 2
         local oy = self.sprites[1]:getHeight() / 2
         self.breakingAnimation:draw(self.position.x, self.position.y, 0, 1, 1, ox, oy)
+
+        love.graphics.setShader()
 
         --love.graphics.setColor(Colors.red)
         --self.collider:draw()
