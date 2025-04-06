@@ -19,6 +19,8 @@ local gameWidth, gameHeight = 240, 135
 --local windowWidth, windowHeight = 1440, 810
 local windowWidth, windowHeight = 1920, 1080
 
+local backgroundSprite = Sprites.Background
+
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})
 
@@ -38,6 +40,9 @@ end
 
 function love.draw()
     Push:start()
+
+    backgroundSprite:draw(0,0)
+
     camera:attach()
     InstanceManager.draw()
     camera:detach()

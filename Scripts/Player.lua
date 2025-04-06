@@ -217,7 +217,8 @@ local Player = Class{
     end,
 
     drawShadow = function(self)
-        love.graphics.setColor(68/255,56/255,70/255,1)
+        --love.graphics.setColor(68/255,56/255,70/255,1)
+        love.graphics.setColor(0,0,0,0.6)
         love.graphics.ellipse('fill', self.position.x, self.position.y + Player.shadowOffsety, Player.shadowRadiusx, Player.shadowRadiusy)
         love.graphics.setColor(Colors.white)
     end,

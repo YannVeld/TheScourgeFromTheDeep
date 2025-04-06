@@ -130,7 +130,8 @@ local Barrel = Class{
     end,
 
     drawShadow = function(self)
-        love.graphics.setColor(68/255,56/255,70/255,1)
+        --love.graphics.setColor(68/255,56/255,70/255,1)
+        love.graphics.setColor(0,0,0,0.6)
         love.graphics.ellipse('fill', self.position.x + Barrel.shadowOffsetx, self.position.y + Barrel.shadowOffsety, Barrel.shadowRadiusx, Barrel.shadowRadiusy)
         love.graphics.setColor(Colors.white)
     end,

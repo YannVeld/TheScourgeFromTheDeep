@@ -6,20 +6,20 @@ Barrel = require("Scripts/Barrel")
 
 
 local thegame = {}
-
 local player
+
 
 function thegame:enter()
     player = Player(Vector(50, 50))
     boss = Boss(Vector(150, 50), player)
 
-    barrel1 = Barrel(Vector(64, 80))
-    barrel2 = Barrel(Vector(20, 96))
-    barrel3 = Barrel(Vector(120, 20))
+    barrel1 = Barrel(Vector(64, 110))
+    barrel2 = Barrel(Vector(20, 80))
+    barrel3 = Barrel(Vector(120, 50))
 
     local gameWidth = Push:getWidth()
     local gameHeight = Push:getHeight()
-    local topEdgeOffset = 16
+    local topEdgeOffset = 34
 
     local rectTop = Rectangle(Vector(-10,-10+topEdgeOffset), gameWidth+20, 10)
     local rectBottom = Rectangle(Vector(-10,gameHeight), gameWidth+20, 10)
