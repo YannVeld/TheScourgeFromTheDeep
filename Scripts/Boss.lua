@@ -20,6 +20,8 @@ local Boss = Class{
 
     getHitEffectDuration = 0.3,
 
+    bossActions = {walk=1, chase=2},
+
     init = function(self, position, playerInstance)
         Enemy.init(self, position, Boss.health)
         self.player = playerInstance
@@ -37,6 +39,7 @@ local Boss = Class{
         self.timeUntilDecision = 0
 
         self.state = self.idleState
+        self.AIAction = 1
 
         local myColliderRect = Rectangle(Vector(0,0), 32, 8)
         myColliderRect:setPosition(self.position - Vector(16,4))
@@ -84,42 +87,35 @@ local Boss = Class{
         end
 
         return self.idleState
-
-        --local speed = self.velocity:len()
-        --local isMoving = speed > 0
-        --local isDashing = (self.state == self.dashingState) and (not self.dashingState.dashEnded)
-        --local isAttacking = (self.state == self.attackingState) and (not self.attackingState.attackEnded)
-
-        --if isAttacking then
-        --    return self.attackingState
-        --end
-        --if isDashing then
-        --    return self.dashingState
-        --end
-
-        --if (not isAttacking) and (not isDashing) then
-        --    if self.inputManager.attackPressed and self.attackingState.canAttack then
-        --        self.inputManager:resetAttackPress()
-        --        return self.attackingState
-        --    end
-
-        --    if self.inputManager.dashPressed and self.dashingState.canDash then
-        --        self.inputManager:resetDashPress()
-        --        return self.dashingState
-        --    end
-        --end
-
-        --if isMoving or self.inputManager.moveKeyPressed then
-        --    return self.runningState
-        --end
-
-        --return self.idleState
     end,
 
     doBossAI = function(self, dt)
         self.timeUntilDecision = self.timeUntilDecision - dt
+
+        if self.AIAction == Boss.bossActions.chase then
+            self.targetPosition = self.player.position
+        end
+
         if self.timeUntilDecision > 0 then return end
 
+        --local action = Lume.randomchoice(Boss.bossActions)
+        self.AIAction = Lume.randomchoice({1,2})
+
+        if self.AIAction == Boss.bossActions.walk then
+            print("Walking")
+            xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
+            ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
+            newpos = Vector(xpos, ypos)
+            self.targetPosition = newpos
+
+            self.timeUntilDecision = 5
+        end
+
+        if self.AIAction == Boss.bossActions.chase then
+            print("Chasing")
+            self.targetPosition = self.player.position
+            self.timeUntilDecision = 6
+        end
 
         -- Follow mouse
         --local mouseX, mouseY = love.mouse.getPosition()
@@ -127,14 +123,6 @@ local Boss = Class{
         --if (mouseX ~= nil) or (mouseY ~= nil) then
         --    self.targetPosition = Vector(mouseX, mouseY)
         --end
-
-        
-        xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
-        ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
-        newpos = Vector(xpos, ypos)
-        self.targetPosition = newpos
-
-        self.timeUntilDecision = 10
     end,
 
 

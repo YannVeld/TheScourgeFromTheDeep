@@ -5,7 +5,8 @@ PlayerInputManager = Class{
     walkDown = "s",
     walkLeft = "a",
     walkRight = "d",
-    dash = "lshift",
+    dash_keyboard = "lshift",
+    dash_mouse = 2,
     attack_keyboard = "space", 
     attack_mouse = 1, 
 
@@ -50,7 +51,7 @@ PlayerInputManager = Class{
     end,
 
     keypressed = function(self, key, scancode, isrepeat)
-        if key == PlayerInputManager.dash then
+        if key == PlayerInputManager.dash_keyboard then
             self.dashPressed = true
             self.dashPressTime = self.time
         end
@@ -61,6 +62,10 @@ PlayerInputManager = Class{
     end,
 
     mousepressed = function(self, x, y, button, istouch, presses)
+        if button == PlayerInputManager.dash_mouse then
+            self.dashPressed = true
+            self.dashPressTime = self.time
+        end
         if button == PlayerInputManager.attack_mouse then
             self.attackPressed = true
             self.attackPressTime = self.time
