@@ -33,7 +33,13 @@ DashingState = Class{
     end,
 
     checkEndDash = function(self)
-        return DashingState.dashSpeed * self.timeSinceEnter > DashingState.dashDistance
+        local timeOver = DashingState.dashSpeed * self.timeSinceEnter > DashingState.dashDistance
+
+        local standingStill = false
+        local speed = self.player.velocity:len()
+        if speed < 10.0 then standingStill = true end
+
+        return timeOver or standingStill
     end,
 
 

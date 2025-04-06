@@ -44,11 +44,17 @@ local Player = Class{
 
         local myColliderRect = Rectangle(Vector(0,0), 8, 4)
         myColliderRect:setPosition(self.position - Vector(4,-6))
-        self.collider = Collider({myColliderRect}, self.position, "Player", self)
+        self.collider = Collider({myColliderRect}, self.position, "PlayerCollider", self)
         World:add(self.collider)
+
+        local myHitBoxRect = Rectangle(self.position:clone() - Vector(4,8), 8, 18)
+        self.hitbox = Collider({myHitBoxRect}, self.position, "Player", self)
+        World:add(self.hitbox)
 
         self.getHitShader = love.graphics.newShader("Shaders/hitEffect.glsl")
         self.getHitShader:send("frac", 0.0)
+
+        self.collisionTypes = {"Enemy", "GameEdge"}
 
         self.damagedTime = -10
         self.time = 0
@@ -57,6 +63,7 @@ local Player = Class{
     setPosition = function(self, position)
         self.position = position
         self.collider:setPosition(position)
+        self.hitbox:setPosition(position)
     end,
 
     changeState = function(self, newState)
@@ -113,7 +120,7 @@ local Player = Class{
         -- Diagonal
         local tryPos = self.position:clone() + moveStep
         self.collider:setPosition(tryPos)
-        local colliding = World:checkCollision(self.collider)
+        local colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -122,7 +129,7 @@ local Player = Class{
         tryPos = self.position:clone()
         tryPos.x = tryPos.x + moveStep.x
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -131,7 +138,7 @@ local Player = Class{
         tryPos = self.position:clone()
         tryPos.y = tryPos.y + moveStep.y
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -173,7 +180,9 @@ local Player = Class{
         end
     end,
 
-    DoDamage = function(self, amount, origin)
+    DoDamage = function(self, amount, origin, knockback)
+        if knockback == nil then knockback = 0 end
+
         -- Dont get hit when dashing
         if self.state == self.dashingState then
             return
@@ -181,7 +190,7 @@ local Player = Class{
 
         -- Knockback
         local vecFromOrigin = origin - self.position
-        self.velocity = self.velocity - vecFromOrigin:normalized() * 200
+        self.velocity = self.velocity - vecFromOrigin:normalized() * knockback
         self:changeState(self.knockbackState)
 
         -- For damaged shader
@@ -235,6 +244,7 @@ local Player = Class{
 
         --love.graphics.setColor(Colors.blue)
         --self.collider:draw()
+        --self.hitbox:draw()
         --love.graphics.setColor(Colors.white)
         --love.graphics.ellipse("fill", self.position.x, self.position.y, 5, 5)
     end,

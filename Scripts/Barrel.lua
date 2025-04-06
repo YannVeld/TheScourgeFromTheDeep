@@ -34,13 +34,17 @@ local Barrel = Class{
 
         self.getHitShader = love.graphics.newShader("Shaders/hitEffect.glsl")
         self.getHitShader:send("frac", 0.0)
+
+        self.collisionTypes = {"GameEdge", "Enemy", "PlayerCollider"}
     end,
 
-    DoDamage = function(self, amount, origin)
+    DoDamage = function(self, amount, origin, knockback)
+        if knockback == nil then knockback = 0 end
+
         self:TakeDamage(amount)
 
         local vecFromOrigin = origin - self.position
-        self.velocity = self.velocity - vecFromOrigin:normalized() * 200
+        self.velocity = self.velocity - vecFromOrigin:normalized() * knockback
     end,
 
     setPosition = function(self, position)
@@ -61,7 +65,7 @@ local Barrel = Class{
         -- Diagonal
         local tryPos = self.position:clone() + moveStep
         self.collider:setPosition(tryPos)
-        local colliding = World:checkCollision(self.collider)
+        local colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -70,7 +74,7 @@ local Barrel = Class{
         tryPos = self.position:clone()
         tryPos.x = tryPos.x + moveStep.x
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -79,7 +83,7 @@ local Barrel = Class{
         tryPos = self.position:clone()
         tryPos.y = tryPos.y + moveStep.y
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end

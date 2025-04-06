@@ -4,6 +4,7 @@ BossFireSwordState = Class{
     attackCooldown = 2.0,
     attackHitFrames = {10,11},
     attackDamage = 20.0,
+    attackKnockback = 300,
 
     spriteSheet = Sprites.Boss_swordSwing,
     animSpeed = 16,
@@ -110,7 +111,7 @@ BossFireSwordState = Class{
         if Lume.find(self.attackHitList, other) ~= nil then return end
 
         table.insert(self.attackHitList, other)
-        other.instance:DoDamage(BossFireSwordState.attackDamage, self.boss.position)
+        other.instance:DoDamage(BossFireSwordState.attackDamage, self.boss.position, BossFireSwordState.attackKnockback)
     end,
 
     checkPlayerInRange = function(self)

@@ -4,6 +4,7 @@ Boss = require("Scripts/Boss")
 Barrel = require("Scripts/Barrel")
 
 
+
 local thegame = {}
 
 local player
@@ -16,17 +17,22 @@ function thegame:enter()
     barrel2 = Barrel(Vector(20, 96))
     barrel3 = Barrel(Vector(120, 20))
 
-
     local gameWidth = Push:getWidth()
     local gameHeight = Push:getHeight()
-    local topEdgeOffset = 10
+    local topEdgeOffset = 16
 
     local rectTop = Rectangle(Vector(-10,-10+topEdgeOffset), gameWidth+20, 10)
     local rectBottom = Rectangle(Vector(-10,gameHeight), gameWidth+20, 10)
     local rectLeft = Rectangle(Vector(-10,-10), 10, gameHeight+20)
     local rectRight = Rectangle(Vector(gameWidth,-10), 10, gameHeight+20)
+
     local edgeCollider = Collider({rectTop, rectBottom, rectLeft, rectRight}, Vector(0,0), "GameEdge", nil)
     World:add(edgeCollider)
+
+    local bossTopEdgeOffset = 40
+    local bossRectTop = Rectangle(Vector(-10,-10+bossTopEdgeOffset), gameWidth+20, 10)
+    local bossEdgeCollider = Collider({bossRectTop, rectBottom, rectLeft, rectRight}, Vector(0,0), "BossGameEdge", nil)
+    World:add(bossEdgeCollider)
 end
 
 function thegame:update(dt)

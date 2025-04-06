@@ -4,6 +4,7 @@ Enemy = require "Scripts.Enemy"
 BossIdleState = require"Scripts.BossStates.BossIdleState"
 BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
+BossFireBreathState = require"Scripts.BossStates.BossFireBreathState"
 
 local Boss = Class{
     __includes = {Enemy},
@@ -20,7 +21,7 @@ local Boss = Class{
 
     getHitEffectDuration = 0.3,
 
-    bossActions = {walk=1, chase=2},
+    bossActions = {walk=1, chase=2, firebreath=3},
 
     init = function(self, position, playerInstance)
         Enemy.init(self, position, Boss.health)
@@ -35,6 +36,7 @@ local Boss = Class{
         self.idleState = BossIdleState(self)
         self.walkingState = BossWalkingState(self)
         self.fireSwordState = BossFireSwordState(self)
+        self.fireBreathState = BossFireBreathState(self)
 
         self.timeUntilDecision = 0
 
@@ -48,9 +50,11 @@ local Boss = Class{
 
         self.getHitShader = love.graphics.newShader("Shaders/hitEffect.glsl")
         self.getHitShader:send("frac", 0.0)
+
+        self.collisionTypes = {"BossGameEdge", "PlayerCollider"}
     end,
 
-    DoDamage = function(self, amount, origin)
+    DoDamage = function(self, amount, origin, knockback)
         self:TakeDamage(amount)
     end,
 
@@ -66,9 +70,23 @@ local Boss = Class{
         self.collider:setPosition(position)
     end,
 
-    changeState = function(self)
+    changeState = function(self, newState)
+        if newState == self.state then
+            return false
+        end
+
+        self.state:exit()
+        self.state = newState
+        self.state:enter()
+        return true
+    end,
+
+    getState = function(self)
         local isFireSword = (self.state == self.fireSwordState) and (not self.fireSwordState.attackEnded)
         if isFireSword then return self.fireSwordState end
+
+        local isFireBreath = (self.state == self.fireBreathState) and (not self.fireBreathState.attackEnded)
+        if isFireBreath then return self.fireBreathState end
 
         local vecToPlayer = self.player.position - self.position
         local distToPlayer = vecToPlayer:len()
@@ -97,9 +115,11 @@ local Boss = Class{
         end
 
         if self.timeUntilDecision > 0 then return end
+        if self.state == self.fireSwordState then return end
 
         --local action = Lume.randomchoice(Boss.bossActions)
-        self.AIAction = Lume.randomchoice({1,2})
+        self.AIAction = Lume.randomchoice({1,2,3})
+        --self.AIAction = 3
 
         if self.AIAction == Boss.bossActions.walk then
             print("Walking")
@@ -108,13 +128,19 @@ local Boss = Class{
             newpos = Vector(xpos, ypos)
             self.targetPosition = newpos
 
-            self.timeUntilDecision = 5
+            self.timeUntilDecision = 1
         end
 
         if self.AIAction == Boss.bossActions.chase then
             print("Chasing")
             self.targetPosition = self.player.position
-            self.timeUntilDecision = 6
+            self.timeUntilDecision = 4
+        end
+
+        if self.AIAction == Boss.bossActions.firebreath then
+            print("Firebreath")
+            self:changeState(self.fireBreathState)
+            self.timeUntilDecision = 2
         end
 
         -- Follow mouse
@@ -130,7 +156,7 @@ local Boss = Class{
         -- Diagonal
         local tryPos = self.position:clone() + moveStep
         self.collider:setPosition(tryPos)
-        local colliding = World:checkCollision(self.collider)
+        local colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -139,7 +165,7 @@ local Boss = Class{
         tryPos = self.position:clone()
         tryPos.x = tryPos.x + moveStep.x
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -148,7 +174,7 @@ local Boss = Class{
         tryPos = self.position:clone()
         tryPos.y = tryPos.y + moveStep.y
         self.collider:setPosition(tryPos)
-        colliding = World:checkCollision(self.collider)
+        colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
             return tryPos
         end
@@ -181,15 +207,12 @@ local Boss = Class{
 
         self.walkingState:passiveUpdate(dt)
         self.fireSwordState:passiveUpdate(dt)
+        self.fireBreathState:passiveUpdate(dt)
 
         self:doBossAI(dt)
 
-        local newState = self:changeState()
-        if newState ~= self.state then
-            self.state:exit()
-            self.state = newState
-            self.state:enter()
-        end
+        local newState = self:getState()
+        self:changeState(newState)
 
         self.state:update(dt) 
         self:doMovement(dt)

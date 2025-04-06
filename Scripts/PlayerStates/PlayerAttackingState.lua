@@ -8,6 +8,8 @@ AttackingState = Class{
     attack2HitFrames = {9,10},
     attack1Damage = 5.0,
     attack2Damage = 5.0,
+    attack1Knockback = 200,
+    attack2Knockback = 200,
 
     spriteSheet = Sprites.Knight_attack,
     animSpeed = 14,
@@ -118,7 +120,7 @@ AttackingState = Class{
         if Lume.find(self.attack1HitList, other) ~= nil then return end
 
         table.insert(self.attack1HitList, other)
-        other.instance:DoDamage(PlayerAttackingState.attack1Damage, self.player.position)
+        other.instance:DoDamage(PlayerAttackingState.attack1Damage, self.player.position, PlayerAttackingState.attack1Knockback)
     end,
 
     hitAttack2 = function(self, other)
@@ -126,7 +128,7 @@ AttackingState = Class{
         if Lume.find(self.attack2HitList, other) ~= nil then return end
 
         table.insert(self.attack2HitList, other)
-        other.instance:DoDamage(PlayerAttackingState.attack2Damage, self.player.position)
+        other.instance:DoDamage(PlayerAttackingState.attack2Damage, self.player.position, PlayerAttackingState.attack2Knockback)
     end,
 
     update = function(self, dt)
