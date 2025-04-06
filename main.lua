@@ -23,6 +23,7 @@ local backgroundSprite = Sprites.Background
 
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})
+    Shack:setDimensions(Push:getDimensions())
 
     World = ColliderWorld()
 
@@ -34,12 +35,14 @@ function love.load()
 end
 
 function love.update(dt)
+    Shack:update(dt)
     InstanceManager.update(dt)
     Timer.update(dt)
 end
 
 function love.draw()
     Push:start()
+    Shack:apply()
 
     backgroundSprite:draw(0,0)
 

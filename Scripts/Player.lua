@@ -21,6 +21,7 @@ local Player = Class{
     shadowOffsety = 9,
 
     getHitEffectDuration = 0.3,
+    getHitShakeMagnitude = 2,
 
     init = function(self, position)
         Instance.init(self)
@@ -191,6 +192,9 @@ local Player = Class{
         local vecFromOrigin = origin - self.position
         self.velocity = self.velocity - vecFromOrigin:normalized() * knockback
         self:changeState(self.knockbackState)
+
+        -- Screen shake
+        Shack:setShake(Player.getHitShakeMagnitude)
 
         -- For damaged shader
         self:TakeDamage(amount)

@@ -9,7 +9,7 @@ Camera = require "Packages.hump.camera"
 --
 Lume = require "Packages.lume.lume"
 --
---Shack = require "Packages.shack.shack"
+Shack = require "Packages.shack.shack"
 --
 --Baton = require "Packages.baton.baton"
 --
