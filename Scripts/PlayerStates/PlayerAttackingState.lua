@@ -118,7 +118,7 @@ AttackingState = Class{
         if Lume.find(self.attack1HitList, other) ~= nil then return end
 
         table.insert(self.attack1HitList, other)
-        other.instance:DoDamage(PlayerAttackingState.attack1Damage)
+        other.instance:DoDamage(PlayerAttackingState.attack1Damage, self.player.position)
     end,
 
     hitAttack2 = function(self, other)
@@ -126,7 +126,7 @@ AttackingState = Class{
         if Lume.find(self.attack2HitList, other) ~= nil then return end
 
         table.insert(self.attack2HitList, other)
-        other.instance:DoDamage(PlayerAttackingState.attack2Damage)
+        other.instance:DoDamage(PlayerAttackingState.attack2Damage, self.player.position)
     end,
 
     update = function(self, dt)

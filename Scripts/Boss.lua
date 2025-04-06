@@ -47,6 +47,10 @@ local Boss = Class{
         self.getHitShader:send("frac", 0.0)
     end,
 
+    DoDamage = function(self, amount, origin)
+        self:TakeDamage(amount)
+    end,
+
     checkDead = function(self)
         if self.isDead then
             World:remove(self.collider)

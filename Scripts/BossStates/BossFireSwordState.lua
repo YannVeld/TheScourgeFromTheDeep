@@ -110,7 +110,7 @@ BossFireSwordState = Class{
         if Lume.find(self.attackHitList, other) ~= nil then return end
 
         table.insert(self.attackHitList, other)
-        other.instance:DoDamage(BossFireSwordState.attackDamage)
+        other.instance:DoDamage(BossFireSwordState.attackDamage, self.boss.position)
     end,
 
     update = function(self, dt)

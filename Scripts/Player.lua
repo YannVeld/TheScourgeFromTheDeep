@@ -6,6 +6,7 @@ PlayerIdleState = require"Scripts.PlayerStates.PlayerIdleState"
 PlayerRunningState = require"Scripts.PlayerStates.PlayerRunningState"
 PlayerDashingState = require"Scripts.PlayerStates.PlayerDashingState"
 PlayerAttackingState = require"Scripts.PlayerStates.PlayerAttackingState"
+PlayerKnockbackState = require"Scripts.PlayerStates.PlayerKnockbackState"
 
 local Player = Class{
     __includes = {Instance},
@@ -16,6 +17,8 @@ local Player = Class{
     shadowRadiusx = 8,
     shadowRadiusy = 3,
     shadowOffsety = 9,
+
+    getHitEffectDuration = 0.3,
 
     init = function(self, position)
         Instance.init(self)
@@ -30,6 +33,7 @@ local Player = Class{
         self.runningState = PlayerRunningState(self)
         self.dashingState = PlayerDashingState(self)
         self.attackingState = PlayerAttackingState(self)
+        self.knockbackState = PlayerKnockbackState(self)
 
         self.state = self.idleState
 
@@ -37,6 +41,12 @@ local Player = Class{
         myColliderRect:setPosition(self.position - Vector(4,-6))
         self.collider = Collider({myColliderRect}, self.position, "Player", self)
         World:add(self.collider)
+
+        self.getHitShader = love.graphics.newShader("Shaders/hitEffect.glsl")
+        self.getHitShader:send("frac", 0.0)
+
+        self.damagedTime = -10
+        self.time = 0
     end,
 
     setPosition = function(self, position)
@@ -44,7 +54,21 @@ local Player = Class{
         self.collider:setPosition(position)
     end,
 
-    changeState = function(self)
+    changeState = function(self, newState)
+        if newState == self.state then
+            return false
+        end
+
+        self.state:exit()
+        self.state = newState
+        self.state:enter()
+        return true
+    end,
+
+    getState = function(self)
+        local isKnocked = (self.state == self.knockbackState) and self.knockbackState.isMoving
+        if isKnocked then return self.knockbackState end
+
         local speed = self.velocity:len()
         local isMoving = speed > 0
         local isDashing = (self.state == self.dashingState) and (not self.dashingState.dashEnded)
@@ -127,22 +151,33 @@ local Player = Class{
         self:setPosition(newPos)
     end,
 
-    DoDamage = function(self, amount)
+    DoDamage = function(self, amount, origin)
+        -- Dont get hit when dashing
+        if self.state == self.dashingState then
+            return
+        end
+
         print("Hit!")
         print(amount)
+
+        -- Knockback
+        local vecFromOrigin = origin - self.position
+        self.velocity = self.velocity - vecFromOrigin:normalized() * 200
+        self:changeState(self.knockbackState)
+
+        -- For damaged shader
+        self.damagedTime = self.time
     end,
 
     update = function(self, dt)
+        self.time = self.time + dt
+        self:doGetHitEffect()
         self.inputManager:update(dt)
         self.dashingState:passiveUpdate(dt)
         self.attackingState:passiveUpdate(dt)
 
-        local newState = self:changeState()
-        if newState ~= self.state then
-            self.state:exit()
-            self.state = newState
-            self.state:enter()
-        end
+        local newState = self:getState()
+        self:changeState(newState)
 
         self.state:update(dt) 
         self:doMovement(dt)
@@ -158,9 +193,20 @@ local Player = Class{
         love.graphics.setColor(Colors.white)
     end,
 
+    doGetHitEffect = function(self)
+        local frac = 1.0 - (self.time - self.damagedTime) / Player.getHitEffectDuration
+
+        if (frac >= 0.0) and (frac <= 1.0) then
+            self.getHitShader:send("frac", frac)
+        end
+    end,
+
     draw = function(self)
         self:drawShadow()
+        
+        love.graphics.setShader(self.getHitShader)
         self.state:draw()
+        love.graphics.setShader()
 
 
         --love.graphics.setColor(Colors.blue)

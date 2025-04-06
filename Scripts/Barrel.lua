@@ -8,6 +8,9 @@ local Barrel = Class{
     spriteSheet = Sprites.Barrel,
     animSpeed = 10,
 
+    speedStopCutoff = 1.0,
+    friction = 500,
+
     shadowRadiusx = 8,
     shadowRadiusy = 4,
     shadowOffsetx = -0.5,
@@ -17,6 +20,8 @@ local Barrel = Class{
 
     init = function(self, position)
         Enemy.init(self, position, Barrel.health)
+
+        self.velocity = Vector(0,0)
 
         self.animationSpeed = 0
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(Barrel.spriteSheet, 32, 32, 0, 0)
@@ -31,18 +36,84 @@ local Barrel = Class{
         self.getHitShader:send("frac", 0.0)
     end,
 
+    DoDamage = function(self, amount, origin)
+        self:TakeDamage(amount)
+
+        local vecFromOrigin = origin - self.position
+        self.velocity = self.velocity - vecFromOrigin:normalized() * 200
+    end,
+
+    setPosition = function(self, position)
+        self.position = position
+        self.collider:setPosition(position)
+    end,
+
     checkDead = function(self)
         if self.isDead then
             World:remove(self.collider)
             self.animationSpeed = Barrel.animSpeed
             self.breakingAnimation:setAnimationSpeed(self.animationSpeed)
+            self.velocity = Vector(0,0)
         end
     end,
+
+    resolveMovementObstructions = function(self, moveStep)
+        -- Diagonal
+        local tryPos = self.position:clone() + moveStep
+        self.collider:setPosition(tryPos)
+        local colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+
+        -- Try along x
+        tryPos = self.position:clone()
+        tryPos.x = tryPos.x + moveStep.x
+        self.collider:setPosition(tryPos)
+        colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+        
+        -- Try along y
+        tryPos = self.position:clone()
+        tryPos.y = tryPos.y + moveStep.y
+        self.collider:setPosition(tryPos)
+        colliding = World:checkCollision(self.collider)
+        if not colliding then
+            return tryPos
+        end
+
+        return self.position
+    end,
+
+    doMovement = function(self, dt)
+        -- Acceleratio
+        local normedVelocity = self.velocity:normalized()
+        local frictionVec = Vector(0,0)
+        frictionVec.x = - normedVelocity.x * Barrel.friction
+        frictionVec.y = - normedVelocity.y * Barrel.friction
+
+        self.velocity = self.velocity + frictionVec * dt
+
+        if math.abs( self.velocity.x ) < Barrel.speedStopCutoff then
+            self.velocity.x = 0.0
+        end
+        if math.abs( self.velocity.y ) < Barrel.speedStopCutoff then
+            self.velocity.y = 0.0
+        end
+
+        local moveStep = self.velocity * dt
+        local newPos = self:resolveMovementObstructions(moveStep)
+        self:setPosition(newPos)
+    end,
+
 
     update = function(self, dt)
         self:doGetHitEffect()
         Enemy.update(self, dt)
 
+        self:doMovement(dt)
         self:checkDead()
 
         self.breakingAnimation:update(dt)
@@ -69,7 +140,9 @@ local Barrel = Class{
     end,
 
     draw = function(self)
-        self:drawShadow()
+        if not self.isDead then
+            self:drawShadow()
+        end
 
         love.graphics.setShader(self.getHitShader)
 

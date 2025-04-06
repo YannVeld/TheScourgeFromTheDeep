@@ -14,7 +14,7 @@ local Enemy = Class{
         self.time = 0
     end,
 
-    DoDamage = function(self, amount)
+    TakeDamage = function(self, amount)
         self.health = self.health - amount
         self.damagedTime = self.time
 
