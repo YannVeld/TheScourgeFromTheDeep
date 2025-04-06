@@ -2,7 +2,7 @@
 AttackingState = Class{
 
     attack1EndFrame = 5,
-    attackCooldown = 0.4,
+    attackCooldown = 0.1,
 
     attack1HitFrames = {4,5},
     attack1Damage = 5.0,
