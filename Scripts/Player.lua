@@ -238,10 +238,6 @@ local Player = Class{
         self.state:draw()
         love.graphics.setShader()
 
-        love.graphics.setColor(Colors.green)
-        love.graphics.print(self.health, Push:getWidth()-30, 5)
-        love.graphics.setColor(Colors.white)
-
         --love.graphics.setColor(Colors.blue)
         ----self.collider:draw()
         --self.hitbox:draw()

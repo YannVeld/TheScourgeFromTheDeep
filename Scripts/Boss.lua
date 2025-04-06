@@ -181,10 +181,6 @@ local Boss = Class{
         self.state:draw()
         love.graphics.setShader()
 
-        love.graphics.setColor(Colors.red)
-        love.graphics.print(self.health, 5, 5)
-        love.graphics.setColor(Colors.white)
-
         --love.graphics.setColor(Colors.red)
         --self.collider:draw()
         --love.graphics.setColor(Colors.white)

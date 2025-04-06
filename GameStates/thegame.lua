@@ -3,15 +3,20 @@ Player = require("Scripts/Player")
 Boss = require("Scripts/Boss")
 Barrel = require("Scripts/Barrel")
 
+UIManager = require("Scripts/UIManager")
 
 
 local thegame = {}
 local player
+local boss
+local uiManager
 
 
 function thegame:enter()
-    player = Player(Vector(50, 50))
-    boss = Boss(Vector(150, 50), player)
+    player = Player(Vector(20, 100))
+    boss = Boss(Vector(Push:getWidth()-40, 100), player)
+
+    uiManager = UIManager(player, boss)
 
     barrel1 = Barrel(Vector(64, 110))
     barrel2 = Barrel(Vector(20, 80))
