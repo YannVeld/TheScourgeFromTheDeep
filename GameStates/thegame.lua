@@ -4,6 +4,7 @@ Boss = require("Scripts/Boss")
 Barrel = require("Scripts/Barrel")
 
 UIManager = require("Scripts/UIManager")
+EndScreenManager = require("Scripts/EndScreenManager")
 
 
 local thegame = {}
@@ -17,6 +18,7 @@ function thegame:enter()
     boss = Boss(Vector(Push:getWidth()-40, 100), player)
 
     uiManager = UIManager(player, boss)
+    endScreenManager = EndScreenManager()
 
     barrel1 = Barrel(Vector(64, 110))
     barrel2 = Barrel(Vector(20, 80))
@@ -41,6 +43,14 @@ function thegame:enter()
 end
 
 function thegame:update(dt)
+    endScreenManager:update(dt)
+
+    if player.isDead then
+        endScreenManager:showEndScreen(false)
+    end
+    if boss.isDead then
+        endScreenManager:showEndScreen(true)
+    end
 end
 
 function thegame:draw()
