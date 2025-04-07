@@ -46,6 +46,13 @@ function thetutorial:enter()
     startedTransition = false
 end
 
+local function PlayMusic()
+    if TutorialMusicSource:isPlaying() then return end
+    if BossMusicSource:isPlaying() then return end
+
+    TutorialMusicSource:play()
+end
+
 local function OpenGate()
     if tutorialuiManager.endedTutorial then
         tutorialGate:OpenGate()
@@ -67,6 +74,7 @@ local function ToNextScene()
 end
 
 function thetutorial:update(dt)
+    PlayMusic()
     OpenGate()
     ToNextScene()
 

@@ -49,6 +49,13 @@ function thegame:enter()
     pressedRestart = false
 end
 
+local function PlayMusic()
+    if TutorialMusicSource:isPlaying() then return end
+    if BossMusicSource:isPlaying() then return end
+
+    BossMusicSource:play()
+end
+
 local function ToNextScene()
     if not pressedRestart then return end
 
@@ -64,6 +71,7 @@ end
 
 
 function thegame:update(dt)
+    PlayMusic()
     endScreenManager:update(dt)
     ToNextScene()
 

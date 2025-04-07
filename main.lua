@@ -24,7 +24,9 @@ local windowWidth, windowHeight = 1920, 1080
 
 local backgroundSprite = Sprites.Background
 
-SoundsVolume = 5
+
+SoundsVolume = 0.5
+MusicVolume = 0.25
 
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})
@@ -41,6 +43,20 @@ function love.load()
     -- Setup font
     Fonts.m3x6:setLineHeight(0.7)
     love.graphics.setFont(Fonts.m3x6)
+
+    -- Music
+    SetupGameMusic()
+end
+
+function SetupGameMusic()
+    TutorialMusicSource = love.audio.newSource("Music/LD57MusicTutorial.wav", "stream")
+    --TutorialMusicSource:setLooping(true)
+    TutorialMusicSource:setVolume(MusicVolume)
+
+    BossMusicSource = love.audio.newSource("Music/LD57Music.wav", "stream")
+    --BossMusicSource:setLooping(true)
+    BossMusicSource:setVolume(MusicVolume)
+
 end
 
 function SwitchGameState(tostate)
