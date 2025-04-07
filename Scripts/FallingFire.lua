@@ -41,6 +41,9 @@ local FallingFire = Class{
         self.spritesExplosion = SpriteLoading.getSpritesFromSpriteSheet(FallingFire.spriteSheetExplosion, 32, 32, 0, 0)
         self.animationExplosion = Animation(self.spritesExplosion, 0, 1, false)
 
+        self.explodeSound = love.audio.newSource("Sounds/explosion1.wav", "static")
+        self.explodeSound:setVolume(SoundsVolume)
+
         self.hitList = {}
 
         local collSize = 10
@@ -83,6 +86,12 @@ local FallingFire = Class{
         end    
     end,
 
+    playExplosionSound = function(self)
+        if not self.hasLanded then return end
+        if self.timeSinceLanding > 0 then return end
+        self.explodeSound:play()
+    end,
+
     checkDestroySelf = function(self, dt)
         if not self.hasLanded then return end
 
@@ -98,6 +107,7 @@ local FallingFire = Class{
         self.animationExplosion:update(dt)
         self.animationMarker:update(dt)
         self:doMovement(dt)
+        self:playExplosionSound()
         self:checkCollision()
         self:checkDestroySelf(dt)
 
