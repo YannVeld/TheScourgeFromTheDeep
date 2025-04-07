@@ -14,7 +14,7 @@ DashingState = Class{
         self.player = playerInstance
         self.dashEnded = true
         self.canDash = true
-        self.timeSinceExit = 0
+        self.timeSinceExit = DashingState.dashCooldown
     end,
 
     enter = function(self)
