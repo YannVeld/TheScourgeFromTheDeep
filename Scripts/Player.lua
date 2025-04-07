@@ -11,7 +11,7 @@ PlayerKnockbackState = require"Scripts.PlayerStates.PlayerKnockbackState"
 local Player = Class{
     __includes = {Instance},
 
-    health = 100,
+    health = 200,
 
     speedStopCutoff = 10.0,
     zorderPosOffset = 6,

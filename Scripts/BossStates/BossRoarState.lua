@@ -59,8 +59,13 @@ BossRoarState = Class{
         -- Spawn fires
         --local futurePlayerPos = self.boss.player.position + self.boss.player.velocity * avgFireHeight / FallingFire.fallSpeed
         local ii,fire
-        local fireCount = 3
         local avgFireHeight = 250
+        local fireCount
+        if self.boss.AI.stage >= 2 then
+            fireCount = 5
+        else
+            fireCount = 3
+        end
 
         for ii = 1, fireCount do
             local posx = Lume.random(10, Push:getWidth()-10)

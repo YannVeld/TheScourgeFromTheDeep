@@ -77,6 +77,7 @@ local FallingFire = Class{
                 if Lume.find(self.hitList, coll) == nil then
                     table.insert(self.hitList, coll)
                     coll.instance:DoDamage(self.damage, self.position, self.knockback)
+                    self:destroy()
                 end
             end
         end    

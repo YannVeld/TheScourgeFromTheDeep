@@ -8,7 +8,8 @@ local BossAI = Class{
 
         self.timeUntilDecision = 0
 
-        self.AIAction = 1
+        self.stage = 0
+        self.AIAction = BossAI.bossActions.idle
 
         self.requestedState = self.boss.idleState
     end,
@@ -90,17 +91,39 @@ local BossAI = Class{
         --return 3
         --local actionList = {BossAI.bossActions.idle, BossAI.bossActions.roar}
 
-        local actionList = {BossAI.bossActions.idle,
-                            BossAI.bossActions.walk,
-                            BossAI.bossActions.chase,
-                            BossAI.bossActions.firebreath,
-                            BossAI.bossActions.roar,
-                            BossAI.bossActions.firesword}
+        local actionList
 
-        local next = Lume.randomchoice(actionList)
-        while next == self.AIAction do
-            next = Lume.randomchoice(actionList)
+        if self.stage == 3 then
+            actionList = {[BossAI.bossActions.idle] = 1,
+                          [BossAI.bossActions.chase] = 1,
+                          [BossAI.bossActions.firebreath] = 1,
+                          [BossAI.bossActions.roar] = 1}
         end
+        if self.stage == 2 then
+            actionList = {[BossAI.bossActions.idle] = 2,
+                          [BossAI.bossActions.walk] = 1,
+                          [BossAI.bossActions.chase] = 1,
+                          [BossAI.bossActions.firebreath] = 1,
+                          [BossAI.bossActions.roar] = 1}
+        end
+        if self.stage == 1 then
+            actionList = {[BossAI.bossActions.idle] = 1,
+                          [BossAI.bossActions.walk] = 1,
+                          [BossAI.bossActions.chase] = 1,
+                          [BossAI.bossActions.firebreath] = 1}
+        end
+        if self.stage == 0 then
+            actionList = {[BossAI.bossActions.idle] = 2,
+                          [BossAI.bossActions.walk] = 2,
+                          [BossAI.bossActions.firebreath] = 1,
+                          [BossAI.bossActions.firesword] = 1}
+        end
+
+        local next = Lume.weightedchoice(actionList)
+        while next == self.AIAction do
+            next = Lume.weightedchoice(actionList)
+        end
+
         return next
     end,
 
@@ -142,7 +165,11 @@ local BossAI = Class{
         if self.AIAction == BossAI.bossActions.idle then
             --print("Idle")
             self.requestedState = self.boss.idleState
-            self.timeUntilDecision = 1
+
+            if self.stage == 0 then self.timeUntilDecision = 2 end
+            if self.stage == 1 then self.timeUntilDecision = 1 end
+            if self.stage == 2 then self.timeUntilDecision = 0.5 end
+            if self.stage == 3 then self.timeUntilDecision = 0.25 end
         end
 
         if self.AIAction == BossAI.bossActions.firesword then
@@ -152,7 +179,7 @@ local BossAI = Class{
         end
 
         if self.AIAction == BossAI.bossActions.roar then
-            --print("Roaring")
+            print("Roaring")
             self.requestedState = self.boss.roarState
             self.timeUntilDecision = 2
         end
@@ -166,13 +193,26 @@ local BossAI = Class{
         --end
     end,
 
+    getBossStage = function(self)
+        if self.boss.state == self.boss.spawningState then return 0 end
+
+        local healthFrac = self.boss.health / Boss.health
+
+        if healthFrac < 0.25 then return 3 end
+        if healthFrac < 0.5 then return 2 end
+        if healthFrac < 0.75 then return 1 end
+        return 0
+    end,
 
     update = function(self, dt)
         self.timeUntilDecision = self.timeUntilDecision - dt
 
+        self.stage = self:getBossStage()
         self:doBossAI(dt)
 
         self:updateContinuousTargetPosition()
+
+        --print("Stage:", self.stage)
     end,
 }
 

@@ -78,8 +78,14 @@ BossFireBreathState = Class{
         local vecToFuturePlayer = futurePlayerPos - mouthPos
 
         local ii,fireball
-        local fireballCount = 3
-        local angleVariation = 40 * 3 / 360 * math.floor(fireballCount / 2)
+        local fireballCount
+        if self.boss.AI.stage >= 2 then
+            fireballCount = 5
+        else
+            fireballCount = 3
+        end
+
+        local angleVariation = 40 * 3 / 360 --* math.floor(fireballCount / 2)
         for ii = 1, fireballCount do
             --local angle = Lume.random(-angleVariation, angleVariation)
             local angle = angleVariation * (ii - math.ceil(fireballCount / 2))

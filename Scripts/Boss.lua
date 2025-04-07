@@ -13,7 +13,7 @@ BossRoarState = require"Scripts.BossStates.BossRoarState"
 local Boss = Class{
     __includes = {Enemy},
 
-    health = 64.0,
+    health = 120.0,
     speedStopCutoff = 10.0,
     zorderPosOffset = 0,
 
