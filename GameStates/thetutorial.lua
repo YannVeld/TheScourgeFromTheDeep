@@ -5,11 +5,13 @@ Barrel = require("Scripts/Barrel")
 UIManager = require("Scripts/UIManager")
 TutorialUIManager = require("Scripts/TutorialUIManager")
 TutorialGate = require("Scripts/TutorialGate")
-
+SceneTransitionManager = require("Scripts/SceneTransitionManager")
 
 local thetutorial = {}
 local player
 local uiManager
+
+local startedTransition
 
 
 function thetutorial:enter()
@@ -18,6 +20,7 @@ function thetutorial:enter()
     uiManager = UIManager(player)
     tutorialuiManager = TutorialUIManager(player)
     tutorialGate = TutorialGate(player, Vector(85,0))
+    sceneTransitionManager = SceneTransitionManager()
 
     local barrelPos = {Vector(11,53), Vector(28,45), Vector(17,106), Vector(40,104), Vector(31,121), 
                        Vector(106,120), Vector(133,124), Vector(198,123), Vector(223,126), Vector(225,97),
@@ -40,7 +43,7 @@ function thetutorial:enter()
     local edgeCollider = Collider({rectTop, rectBottom, rectLeft, rectRight}, Vector(0,0), "GameEdge", nil)
     World:add(edgeCollider)
 
-
+    startedTransition = false
 end
 
 function OpenGate()
@@ -51,8 +54,15 @@ end
 
 function ToNextScene()
     if not tutorialGate.gateIsOpen then return end
-    if tutorialGate:CheckPlayerAtGate() then
+
+    if startedTransition and (not sceneTransitionManager.inTransition) then
         SwitchGameState("Game")
+        return
+    end
+
+    if tutorialGate:CheckPlayerAtGate() then
+        sceneTransitionManager:DoFadeOut()
+        startedTransition = true
     end
 end
 
@@ -70,11 +80,6 @@ function thetutorial:draw()
 end
 
 function thetutorial:keypressed( key, scancode, isrepeat )
-    --if key == "return" then
-    --    SwitchGameState(self)
-    --    return
-    --end
-
     if key == "escape" then
         love.event.quit()
         return

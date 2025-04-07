@@ -5,6 +5,7 @@ Barrel = require("Scripts/Barrel")
 
 UIManager = require("Scripts/UIManager")
 EndScreenManager = require("Scripts/EndScreenManager")
+SceneTransitionManager = require("Scripts/SceneTransitionManager")
 
 
 local thegame = {}
@@ -19,6 +20,7 @@ function thegame:enter()
 
     uiManager = UIManager(player, boss)
     endScreenManager = EndScreenManager()
+    sceneTransitionManager = SceneTransitionManager()
 
     barrel1 = Barrel(Vector(64, 110))
     barrel2 = Barrel(Vector(20, 80))
