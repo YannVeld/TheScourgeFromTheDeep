@@ -91,8 +91,12 @@ local BossAI = Class{
         --return 3
         --local actionList = {BossAI.bossActions.idle, BossAI.bossActions.roar}
 
-        local actionList
+        -- Idle when previous action was breath or roar
+        if (self.AIAction == BossAI.bossActions.firebreath) or (self.AIAction == BossAI.bossActions.roar) then
+            return BossAI.bossActions.idle
+        end
 
+        local actionList
         if self.stage == 3 then
             actionList = {[BossAI.bossActions.idle] = 1,
                           [BossAI.bossActions.chase] = 1,
@@ -169,7 +173,7 @@ local BossAI = Class{
             if self.stage == 0 then self.timeUntilDecision = 2 end
             if self.stage == 1 then self.timeUntilDecision = 1 end
             if self.stage == 2 then self.timeUntilDecision = 0.5 end
-            if self.stage == 3 then self.timeUntilDecision = 0.25 end
+            if self.stage == 3 then self.timeUntilDecision = 0.5 end
         end
 
         if self.AIAction == BossAI.bossActions.firesword then

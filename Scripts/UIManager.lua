@@ -62,7 +62,7 @@ local UIManager = Class{
         -- Meter sprites
         UIManager.healthMeterSprite:draw(self.healthMeterPos.x, self.healthMeterPos.y)
         UIManager.dashMeterSprite:draw(self.dashMeterPos.x, self.dashMeterPos.y)
-        if self.boss ~= nil then
+        if (self.boss ~= nil) and (not self.boss.isDead) then
             UIManager.bossHealthMeterSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
         end
 
@@ -72,10 +72,10 @@ local UIManager = Class{
         love.graphics.setShader(self.dashShader)
         UIManager.dashMeterContentSprite:draw(self.dashMeterPos.x, self.dashMeterPos.y)
         love.graphics.setShader(self.bossHealthShader)
-        if self.boss ~= nil then
+        if (self.boss ~= nil) and (not self.boss.isDead) then
             UIManager.bossHealthMeterContentSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
-            love.graphics.setShader()
         end
+        love.graphics.setShader()
     end,
 }
 

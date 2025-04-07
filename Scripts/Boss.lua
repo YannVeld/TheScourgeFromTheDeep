@@ -9,6 +9,7 @@ BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
 BossFireBreathState = require"Scripts.BossStates.BossFireBreathState"
 BossRoarState = require"Scripts.BossStates.BossRoarState"
+BossDyingState = require"Scripts.BossStates.BossDyingState"
 
 local Boss = Class{
     __includes = {Enemy},
@@ -42,6 +43,7 @@ local Boss = Class{
         self.fireSwordState = BossFireSwordState(self)
         self.fireBreathState = BossFireBreathState(self)
         self.roarState = BossRoarState(self)
+        self.dyingState = BossDyingState(self)
 
         self.timeUntilDecision = 0
 
@@ -75,8 +77,9 @@ local Boss = Class{
     end,
 
     DoDamage = function(self, amount, origin, knockback)
-        -- Dont take damage while spawning
+        -- Dont take damage while spawning or dying
         if self.state == self.spawningState then return end
+        if self.state == self.dyingState then return end
 
         self:TakeDamage(amount)
 
@@ -91,7 +94,7 @@ local Boss = Class{
 
     checkDead = function(self)
         if self.isDead then
-            self:destroySelf()
+            self:changeState(self.dyingState)
         end
     end,
 
@@ -112,6 +115,9 @@ local Boss = Class{
     end,
 
     getState = function(self)
+        local isDying = (self.state == self.dyingState)
+        if isDying then return self.dyingState end
+
         local isSpawning = (self.state == self.spawningState) and (not self.spawningState.hasSpawned)
         if isSpawning then return self.spawningState end
 
@@ -204,6 +210,8 @@ local Boss = Class{
     end,
 
     drawShadow = function(self)
+        if self.isDead then return end
+
         --love.graphics.setColor(68/255,56/255,70/255,1.0)
         love.graphics.setColor(0,0,0,0.6)
         love.graphics.ellipse('fill', self.position.x, self.position.y + Boss.shadowOffsety, Boss.shadowRadiusx, Boss.shadowRadiusy)
@@ -211,6 +219,8 @@ local Boss = Class{
     end,
 
     doGetHitEffect = function(self)
+        if self.isDead then return end
+
         local frac = 1.0 - (self.time - self.damagedTime) / Boss.getHitEffectDuration
         if frac < 0.0 then frac = 0.0 end
         if frac > 1.0 then frac = 1.0 end

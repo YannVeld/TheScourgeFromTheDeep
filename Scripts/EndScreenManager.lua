@@ -4,9 +4,10 @@ Instance = require "Packages.YannUtil.Instance"
 local EndScreenManager = Class{
     __includes = {Instance},
 
-    fadeTime = 2,
+    fadeTime = 4,
     backgroundColor = {34/255,29/255,37/255,1},
-    textColor = {176/255,169/255,135/255,1},
+    --textColor = {176/255,169/255,135/255,1},
+    --textColor = {242/255,236/255,139/255,1},
 
     init = function(self, player, boss)
         Instance.init(self)
@@ -54,26 +55,27 @@ local EndScreenManager = Class{
 
     drawUI = function(self)
         local font = love.graphics.getFont()
-        local texty = 10 --Push:getHeight() / 2
 
         local backgroundColor = Lume.clone(EndScreenManager.backgroundColor)
         backgroundColor[4] = self.alpha
-        local textColor = Lume.clone(EndScreenManager.textColor)
-        textColor[4] = self.alpha
+        --local textColor = Lume.clone(EndScreenManager.textColor)
 
-        -- Background
-        love.graphics.setColor(backgroundColor)
-        love.graphics.rectangle("fill", -20, -20, Push:getWidth()+40, Push:getHeight()+40) 
-
-        -- Message to player
-        love.graphics.setColor(textColor)
-        local lines
+        local lines, textcolor, texty
         if self.win then
-            lines = {"You win!", "Thank you for playing!", "", "", "Press R to restart", "Press esc. to quit"}
+            texty = 0
+            lines = {"Thank you for playing!", "", "", "", "", "Press R to restart", "Press esc. to quit"}
+            textColor = {242/255,236/255,139/255,1}
         else
+            texty = 10
+            love.graphics.setColor(backgroundColor)
+            love.graphics.rectangle("fill", -20, -20, Push:getWidth()+40, Push:getHeight()+40) 
+            
             lines = {"You are dead!", "", "", "", "Press R to restart", "Press esc. to quit"}
+            textColor = {176/255,169/255,135/255,1}
         end
        
+        textColor[4] = self.alpha
+        love.graphics.setColor(textColor)
         for ii,str in pairs(lines) do
             local strWidth = font:getWidth(str)
             love.graphics.print(str, Push:getWidth()/2 - strWidth/2, texty + ii*10)
