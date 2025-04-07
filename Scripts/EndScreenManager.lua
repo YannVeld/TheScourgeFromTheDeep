@@ -54,7 +54,7 @@ local EndScreenManager = Class{
 
     drawUI = function(self)
         local font = love.graphics.getFont()
-        local texty = Push:getHeight() / 2 - 50
+        local texty = 10 --Push:getHeight() / 2
 
         local backgroundColor = Lume.clone(EndScreenManager.backgroundColor)
         backgroundColor[4] = self.alpha
@@ -69,9 +69,9 @@ local EndScreenManager = Class{
         love.graphics.setColor(textColor)
         local lines
         if self.win then
-            lines = {"You win!", "Thank you for playing!", "", "Press R to restart"}
+            lines = {"You win!", "Thank you for playing!", "", "", "Press R to restart", "Press esc. to quit"}
         else
-            lines = {"You are dead!", "", "", "Press R to restart"}
+            lines = {"You are dead!", "", "", "", "Press R to restart", "Press esc. to quit"}
         end
        
         for ii,str in pairs(lines) do
