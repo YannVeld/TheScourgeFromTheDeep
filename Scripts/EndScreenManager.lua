@@ -5,6 +5,8 @@ local EndScreenManager = Class{
     __includes = {Instance},
 
     fadeTime = 2,
+    backgroundColor = {34/255,29/255,37/255,1},
+    textColor = {176/255,169/255,135/255,1},
 
     init = function(self, player, boss)
         Instance.init(self)
@@ -54,9 +56,9 @@ local EndScreenManager = Class{
         local font = love.graphics.getFont()
         local texty = Push:getHeight() / 2 - 50
 
-        local backgroundColor = Lume.clone(Colors.black)
+        local backgroundColor = Lume.clone(EndScreenManager.backgroundColor)
         backgroundColor[4] = self.alpha
-        local textColor = Lume.clone(Colors.white)
+        local textColor = Lume.clone(EndScreenManager.textColor)
         textColor[4] = self.alpha
 
         -- Background

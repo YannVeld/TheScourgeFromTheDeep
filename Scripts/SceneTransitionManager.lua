@@ -5,7 +5,7 @@ local SceneTransitionManager = Class{
     __includes = {Instance},
 
     fadeTime = 0.5,
-    backgroundColor = Colors.black,
+    backgroundColor = {34/255,29/255,37/255,1},
 
     init = function(self)
         Instance.init(self)
