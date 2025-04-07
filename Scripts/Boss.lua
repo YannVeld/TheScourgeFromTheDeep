@@ -25,7 +25,7 @@ local Boss = Class{
     getHitEffectDuration = 0.3,
 
     init = function(self, position, playerInstance)
-        Enemy.init(self, position, Boss.health)
+        Enemy.init(self, position, 1)
         self.player = playerInstance
 
         self.position = position

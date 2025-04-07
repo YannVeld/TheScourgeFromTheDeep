@@ -37,7 +37,7 @@ local UIManager = Class{
         if self.boss ~= nil then
             self.bossHealthShader = love.graphics.newShader("Shaders/healthBarHorizontal.glsl")
             self.bossHealthShader:send("frac", 1.0)
-            self.bossHealthShader:send("rightBound", 0.97)
+            self.bossHealthShader:send("rightBound", 1.0)
             self.bossHealthShader:send("leftBound", 0.211)
         end
     end,

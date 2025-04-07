@@ -22,9 +22,18 @@ BossSpawningState = Class{
         self.boss.velocity = Vector(0,0)
     end,
 
+    updateHealth = function(self)
+        local frac = 1 - self.spawnCountdown / BossSpawningState.spawnTime
+        local newHealth = frac * Boss.health
+        newHealth = Lume.clamp(newHealth,1,Boss.health)
+        self.boss.health = newHealth
+    end,
+
     update = function(self, dt)
         self.spawnCountdown = self.spawnCountdown - dt
         self.idleAnimation:update(dt)
+
+        self:updateHealth()
 
         if self.spawnCountdown <= 0 then
             self.hasSpawned = true
@@ -32,6 +41,7 @@ BossSpawningState = Class{
     end,
 
     exit = function(self)
+        self.boss.health = Boss.health
     end,
 
     draw = function(self)
