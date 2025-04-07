@@ -1,5 +1,6 @@
 Instance = require "Packages.YannUtil.Instance"
 Enemy = require "Scripts.Enemy"
+HealthPickup = require "Scripts.HealthPickup"
 
 local Barrel = Class{
     __includes = {Enemy},
@@ -17,6 +18,7 @@ local Barrel = Class{
     shadowOffsety = 4,
 
     getHitEffectDuration = 0.3,
+    pickupSpawnChance = 0.5,
 
     init = function(self, position)
         Enemy.init(self, position, Barrel.health)
@@ -51,6 +53,20 @@ local Barrel = Class{
 
         local vecFromOrigin = origin - self.position
         self.velocity = self.velocity - vecFromOrigin:normalized() * knockback
+
+        -- spawn item
+        if self.health <= 0 then
+            local rand = Lume.random(0,1)
+            if rand < Barrel.pickupSpawnChance then
+                local vel = self.velocity:clone()
+                local pos = self.position:clone() + self.velocity:normalized() * 10
+                if (pos.x < 5) or (pos.x > Push:getWidth() - 5) or (pos.y < 5) or (pos.y > Push:getHeight() - 5) then
+                    pos = self.position:clone()
+                end
+
+                local item = HealthPickup(pos, vel)
+            end
+        end
     end,
 
     setPosition = function(self, position)

@@ -25,7 +25,7 @@ function thegame:enter()
     sceneTransitionManager = SceneTransitionManager()
 
 
-    local barrelPos = {Vector(22,47), Vector(12,112), Vector(44,124), Vector(235,120), Vector(230,102), Vector(222,66)}
+    local barrelPos = {Vector(22,47), Vector(12,112), Vector(44,124), Vector(235,120), Vector(230,102), Vector(222,66), Vector(113,42), Vector(132,44)}
     local ii
     for ii,pos in pairs(barrelPos) do
         Barrel(pos)

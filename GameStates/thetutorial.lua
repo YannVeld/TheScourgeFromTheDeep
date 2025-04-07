@@ -2,6 +2,7 @@
 Player = require("Scripts/Player")
 Barrel = require("Scripts/Barrel")
 
+
 UIManager = require("Scripts/UIManager")
 TutorialUIManager = require("Scripts/TutorialUIManager")
 TutorialGate = require("Scripts/TutorialGate")
@@ -29,7 +30,6 @@ function thetutorial:enter()
     for ii,pos in pairs(barrelPos) do
         Barrel(pos)
     end
-
 
     local gameWidth = Push:getWidth()
     local gameHeight = Push:getHeight()

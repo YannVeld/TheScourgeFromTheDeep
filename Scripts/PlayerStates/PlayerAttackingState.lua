@@ -8,8 +8,8 @@ AttackingState = Class{
     attack2HitFrames = {9,10},
     attack1Damage = 5.0,
     attack2Damage = 5.0,
-    attack1Knockback = 200,
-    attack2Knockback = 200,
+    attack1Knockback = 100,
+    attack2Knockback = 100,
 
     spriteSheet = Sprites.Knight_attack,
     animSpeed = 14,

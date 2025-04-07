@@ -67,6 +67,8 @@ local Player = Class{
         self.swordSound:setVolume(SoundsVolume + 2)
         self.dashSound = love.audio.newSource("Sounds/Dash.wav", "static")
         self.dashSound:setVolume(SoundsVolume + 2)
+        self.healSound = love.audio.newSource("Sounds/heal.wav", "static")
+        self.healSound:setVolume(SoundsVolume)
     end,
 
     setPosition = function(self, position)
@@ -176,6 +178,15 @@ local Player = Class{
         if self.isDead then
             self:destroy()
         end
+    end,
+
+    Heal = function(self, amount)
+        if self.health >= Player.health then return false end
+
+        self.healSound:play()
+        self.health = self.health + amount
+        self.health = Lume.clamp(self.health, 0, Player.health)
+        return true
     end,
 
     TakeDamage = function(self, amount)
