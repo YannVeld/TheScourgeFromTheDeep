@@ -69,7 +69,7 @@ local EndScreenManager = Class{
         love.graphics.setColor(textColor)
         local lines
         if self.win then
-            lines = {"You Win!", "Thank you for playing!", "", "Press R to restart"}
+            lines = {"You win!", "Thank you for playing!", "", "Press R to restart"}
         else
             lines = {"You are dead!", "", "", "Press R to restart"}
         end
@@ -84,7 +84,7 @@ local EndScreenManager = Class{
         local mins = time[1]
         local secs = time[2]
 
-        str = "Game Time: "..mins.." mins. and "..secs.." secs."
+        str = "Fight duration: "..mins.." mins. and "..secs.." secs."
         strWidth = font:getWidth(str)
 
         love.graphics.print(str, Push:getWidth()/2 - strWidth/2, Push:getHeight() - 30)

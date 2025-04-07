@@ -17,16 +17,24 @@ local startedTransition
 local pressedRestart
 
 function thegame:enter()
-    player = Player(Vector(20, 100))
-    boss = Boss(Vector(Push:getWidth()-40, 100), player)
+    player = Player(Vector(26, 74))
+    boss = Boss(Vector(Push:getWidth()-40, 90), player)
 
     uiManager = UIManager(player, boss)
     endScreenManager = EndScreenManager()
     sceneTransitionManager = SceneTransitionManager()
 
-    barrel1 = Barrel(Vector(64, 110))
-    barrel2 = Barrel(Vector(20, 80))
-    barrel3 = Barrel(Vector(120, 50))
+
+    local barrelPos = {Vector(22,47), Vector(12,112), Vector(44,124), Vector(235,120), Vector(230,102), Vector(222,66)}
+    local ii
+    for ii,pos in pairs(barrelPos) do
+        Barrel(pos)
+    end
+
+
+    --barrel1 = Barrel(Vector(64, 110))
+    --barrel2 = Barrel(Vector(20, 80))
+    --barrel3 = Barrel(Vector(120, 50))
 
     local gameWidth = Push:getWidth()
     local gameHeight = Push:getHeight()

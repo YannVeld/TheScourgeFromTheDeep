@@ -102,7 +102,7 @@ local BossAI = Class{
 
         -- Perform actions
         if self.AIAction == BossAI.bossActions.walk then
-            print("Walking")
+            --print("Walking")
             self.requestedState = self.boss.walkingState
             xpos = Lume.randomchoice({50, Push:getWidth()/2, Push:getWidth()-50})
             ypos = Lume.randomchoice({50,Push:getHeight()/2, Push:getHeight()-50})
@@ -113,26 +113,26 @@ local BossAI = Class{
         end
 
         if self.AIAction == BossAI.bossActions.chase then
-            print("Chasing")
+            --print("Chasing")
             self.requestedState = self.boss.walkingState
             self.boss.targetPosition = self.player.position
             self.timeUntilDecision = 4
         end
 
         if self.AIAction == BossAI.bossActions.firebreath then
-            print("Firebreath")
+            --print("Firebreath")
             self.requestedState = self.boss.fireBreathState
             self.timeUntilDecision = 2
         end
 
         if self.AIAction == BossAI.bossActions.idle then
-            print("Idle")
+            --print("Idle")
             self.requestedState = self.boss.idleState
             self.timeUntilDecision = 1
         end
 
         if self.AIAction == BossAI.bossActions.firesword then
-            print("Firesword")
+            --print("Firesword")
             self.requestedState = self.boss.fireSwordState
             self.timeUntilDecision = 2
         end
