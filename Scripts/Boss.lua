@@ -33,6 +33,7 @@ local Boss = Class{
         self.lookDir = -1
 
         self.targetPosition = self.position
+        self.movementInterrupted = false
 
         self.spawningState = BossSpawningState(self)
         self.idleState = BossIdleState(self)
@@ -125,8 +126,11 @@ local Boss = Class{
         self.collider:setPosition(tryPos)
         local colliding = World:checkCollision(self.collider, self.collisionTypes)
         if not colliding then
+            self.movementInterrupted = false
             return tryPos
         end
+
+        self.movementInterrupted = true
 
         -- Try along x
         tryPos = self.position:clone()

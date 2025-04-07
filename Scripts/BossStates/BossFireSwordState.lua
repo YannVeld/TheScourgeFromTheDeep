@@ -4,7 +4,7 @@ BossFireSwordState = Class{
     attackCooldown = 2.0,
     attackHitFrames = {11},
     attackDamage = 20.0,
-    attackKnockback = 300,
+    attackKnockback = 200,
 
     spriteSheet = Sprites.Boss_swordSwing,
     animSpeed = 16,

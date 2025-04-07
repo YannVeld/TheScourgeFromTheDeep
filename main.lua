@@ -10,6 +10,7 @@ require "Scripts.Collisions.ColliderWorld"
 local Gamestate_thegame = require("GameStates/thegame")
 local Gamestate_thetutorial = require("GameStates/thetutorial")
 local initialGameState = Gamestate_thetutorial
+--local initialGameState = Gamestate_thegame
 
 local camera, instanceManager
 

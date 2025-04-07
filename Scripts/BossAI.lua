@@ -45,11 +45,13 @@ local BossAI = Class{
 
     checkPreviousActionDone = function(self)
         if self.AIAction == BossAI.bossActions.walk then
+            if self.boss.movementInterrupted then return true end
             if self.boss.walkingState.hasArrived then return true end
         end
 
         if self.AIAction == BossAI.bossActions.chase then
-            if self.boss.state == self.boss.fireSwordState then return true end
+            if (self.boss.state == self.boss.walkingState) and self.boss.movementInterrupted then return true end
+            if self.boss.walkingState.hasArrived then return true end
         end
 
         if self.AIAction == BossAI.bossActions.firebreath then
@@ -77,7 +79,7 @@ local BossAI = Class{
 
     getNextAction = function(self)
         --return 3
-        --local actionList = {3,4}
+        --local actionList = {1,2,4}
 
         local actionList = {1,2,3,4}
 
