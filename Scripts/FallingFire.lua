@@ -41,7 +41,7 @@ local FallingFire = Class{
         self.spritesExplosion = SpriteLoading.getSpritesFromSpriteSheet(FallingFire.spriteSheetExplosion, 32, 32, 0, 0)
         self.animationExplosion = Animation(self.spritesExplosion, 0, 1, false)
 
-        self.explodeSound = love.audio.newSource("Sounds/explosion1.wav", "static")
+        self.explodeSound = love.audio.newSource("Sounds/Explosion1.wav", "static")
         self.explodeSound:setVolume(SoundsVolume)
 
         self.hitList = {}

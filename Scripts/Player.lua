@@ -67,7 +67,7 @@ local Player = Class{
         self.swordSound:setVolume(SoundsVolume + 2)
         self.dashSound = love.audio.newSource("Sounds/Dash.wav", "static")
         self.dashSound:setVolume(SoundsVolume + 2)
-        self.healSound = love.audio.newSource("Sounds/heal.wav", "static")
+        self.healSound = love.audio.newSource("Sounds/Heal.wav", "static")
         self.healSound:setVolume(SoundsVolume)
     end,
 
