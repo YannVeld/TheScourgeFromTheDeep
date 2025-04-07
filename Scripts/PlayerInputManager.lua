@@ -1,13 +1,13 @@
 
 PlayerInputManager = Class{
 
-    walkUp = "w",
-    walkDown = "s",
-    walkLeft = "a",
-    walkRight = "d",
-    dash_keyboard = "lshift",
+    walkUp = {"w","up"},
+    walkDown = {"s","down"},
+    walkLeft = {"a","left"},
+    walkRight = {"d","right"},
+    dash_keyboard = {"lshift", "rshift", "lctrl", "rctrl"},
     dash_mouse = 2,
-    attack_keyboard = "space", 
+    attack_keyboard = {"space"}, 
     attack_mouse = 1, 
 
     registerTime = 0.5,
@@ -30,13 +30,22 @@ PlayerInputManager = Class{
         return bool and 1 or 0
     end,
 
+    isKeyListDown = function(keys)
+        local pressed
+        for ii,key in pairs(keys) do
+            pressed = love.keyboard.isDown(key)
+            if pressed then return true end
+        end
+        return false 
+    end,
+
     update = function(self, dt)
         self.time = self.time + dt
 
-        self.verticalInput = PlayerInputManager.boolToNumber(love.keyboard.isDown(PlayerInputManager.walkDown))
-                           - PlayerInputManager.boolToNumber(love.keyboard.isDown(PlayerInputManager.walkUp))
-        self.horizontalInput = PlayerInputManager.boolToNumber(love.keyboard.isDown(PlayerInputManager.walkRight))
-                             - PlayerInputManager.boolToNumber(love.keyboard.isDown(PlayerInputManager.walkLeft))
+        self.verticalInput = PlayerInputManager.boolToNumber(PlayerInputManager.isKeyListDown(PlayerInputManager.walkDown))
+                           - PlayerInputManager.boolToNumber(PlayerInputManager.isKeyListDown(PlayerInputManager.walkUp))
+        self.horizontalInput = PlayerInputManager.boolToNumber(PlayerInputManager.isKeyListDown(PlayerInputManager.walkRight))
+                             - PlayerInputManager.boolToNumber(PlayerInputManager.isKeyListDown(PlayerInputManager.walkLeft))
 
         self.moveKeyPressed = (self.verticalInput ~= 0) or (self.horizontalInput ~= 0)
     end,
@@ -51,11 +60,11 @@ PlayerInputManager = Class{
     end,
 
     keypressed = function(self, key, scancode, isrepeat)
-        if key == PlayerInputManager.dash_keyboard then
+        if Lume.find(PlayerInputManager.dash_keyboard, key) then
             self.dashPressed = true
             self.dashPressTime = self.time
         end
-        if key == PlayerInputManager.attack_keyboard then
+        if Lume.find(PlayerInputManager.attack_keyboard, key) then
             self.attackPressed = true
             self.attackPressTime = self.time
         end

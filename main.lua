@@ -42,12 +42,12 @@ function love.load()
     love.graphics.setFont(Fonts.m3x6)
 end
 
-function SwitchGameState(fromstate)
-    if fromstate == Gamestate_thetutorial then
+function SwitchGameState(tostate)
+    if tostate == "Game" then
         InstanceManager:removeAll()
         Gamestate.switch(Gamestate_thegame)
     end
-    if fromstate == Gamestate_thegame then
+    if tostate == "Tutorial" then
         InstanceManager:removeAll()
         Gamestate.switch(Gamestate_thetutorial)
     end

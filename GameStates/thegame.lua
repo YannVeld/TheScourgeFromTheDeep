@@ -68,7 +68,7 @@ function thegame:keypressed( key, scancode, isrepeat )
     end
     if key == "r" then
         InstanceManager:removeAll()
-        SwitchGameState(self)
+        SwitchGameState("Tutorial")
         return
     end
 end

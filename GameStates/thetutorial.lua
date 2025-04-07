@@ -3,6 +3,8 @@ Player = require("Scripts/Player")
 Barrel = require("Scripts/Barrel")
 
 UIManager = require("Scripts/UIManager")
+TutorialUIManager = require("Scripts/TutorialUIManager")
+TutorialGate = require("Scripts/TutorialGate")
 
 
 local thetutorial = {}
@@ -14,10 +16,8 @@ function thetutorial:enter()
     player = Player(Vector(26, 74))
 
     uiManager = UIManager(player)
-
-    --barrel1 = Barrel(Vector(64, 110))
-    --barrel2 = Barrel(Vector(20, 80))
-    --barrel3 = Barrel(Vector(120, 50))
+    tutorialuiManager = TutorialUIManager(player)
+    tutorialGate = TutorialGate(player, Vector(85,0))
 
     local barrelPos = {Vector(11,53), Vector(28,45), Vector(17,106), Vector(40,104), Vector(31,121), 
                        Vector(106,120), Vector(133,124), Vector(198,123), Vector(223,126), Vector(225,97),
@@ -40,9 +40,25 @@ function thetutorial:enter()
     local edgeCollider = Collider({rectTop, rectBottom, rectLeft, rectRight}, Vector(0,0), "GameEdge", nil)
     World:add(edgeCollider)
 
+
+end
+
+function OpenGate()
+    if tutorialuiManager.endedTutorial then
+        tutorialGate:OpenGate()
+    end
+end
+
+function ToNextScene()
+    if not tutorialGate.gateIsOpen then return end
+    if tutorialGate:CheckPlayerAtGate() then
+        SwitchGameState("Game")
+    end
 end
 
 function thetutorial:update(dt)
+    OpenGate()
+    ToNextScene()
 
     if player.isDead then
         endScreenManager:showEndScreen(false)
@@ -54,13 +70,18 @@ function thetutorial:draw()
 end
 
 function thetutorial:keypressed( key, scancode, isrepeat )
-    if key == "return" then
-        SwitchGameState(self)
-        return
-    end
+    --if key == "return" then
+    --    SwitchGameState(self)
+    --    return
+    --end
 
     if key == "escape" then
         love.event.quit()
+        return
+    end
+    if key == "r" then
+        InstanceManager:removeAll()
+        love.load()
         return
     end
 end
