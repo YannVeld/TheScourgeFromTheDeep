@@ -13,6 +13,8 @@ local player
 local boss
 local uiManager
 
+local startedTransition
+local pressedRestart
 
 function thegame:enter()
     player = Player(Vector(20, 100))
@@ -42,10 +44,28 @@ function thegame:enter()
     local bossRectTop = Rectangle(Vector(-10,-10+bossTopEdgeOffset), gameWidth+20, 10)
     local bossEdgeCollider = Collider({bossRectTop, rectBottom, rectLeft, rectRight}, Vector(0,0), "BossGameEdge", nil)
     World:add(bossEdgeCollider)
+
+    startedTransition = false
+    pressedRestart = false
 end
+
+local function ToNextScene()
+    if not pressedRestart then return end
+
+    if startedTransition and (not sceneTransitionManager.inTransition) then
+        InstanceManager:removeAll()
+        SwitchGameState("Tutorial")
+        return
+    end
+
+    sceneTransitionManager:DoFadeOut()
+    startedTransition = true
+end
+
 
 function thegame:update(dt)
     endScreenManager:update(dt)
+    ToNextScene()
 
     if player.isDead then
         endScreenManager:showEndScreen(false)
@@ -69,8 +89,9 @@ function thegame:keypressed( key, scancode, isrepeat )
         return
     end
     if key == "r" then
-        InstanceManager:removeAll()
-        SwitchGameState("Tutorial")
+        pressedRestart = true
+        --InstanceManager:removeAll()
+        --SwitchGameState("Tutorial")
         return
     end
 end

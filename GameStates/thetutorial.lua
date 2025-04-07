@@ -46,13 +46,13 @@ function thetutorial:enter()
     startedTransition = false
 end
 
-function OpenGate()
+local function OpenGate()
     if tutorialuiManager.endedTutorial then
         tutorialGate:OpenGate()
     end
 end
 
-function ToNextScene()
+local function ToNextScene()
     if not tutorialGate.gateIsOpen then return end
 
     if startedTransition and (not sceneTransitionManager.inTransition) then

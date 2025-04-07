@@ -9,6 +9,8 @@ local SceneTransitionManager = Class{
 
     init = function(self)
         Instance.init(self)
+        
+        self.zorder = 999999999
 
         self.inTransition = true
         self.fadeTimer = 0
