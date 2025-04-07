@@ -9,8 +9,8 @@ require "Scripts.Collisions.ColliderWorld"
 
 local Gamestate_thegame = require("GameStates/thegame")
 local Gamestate_thetutorial = require("GameStates/thetutorial")
-local initialGameState = Gamestate_thetutorial
---local initialGameState = Gamestate_thegame
+--local initialGameState = Gamestate_thetutorial
+local initialGameState = Gamestate_thegame
 
 local camera, instanceManager
 
@@ -26,7 +26,7 @@ local backgroundSprite = Sprites.Background
 
 
 SoundsVolume = 0.5
-MusicVolume = 0.25
+MusicVolume = 0.0 --0.25
 
 function love.load()
     Push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, pixelperfect = true})

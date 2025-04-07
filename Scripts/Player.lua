@@ -196,7 +196,8 @@ local Player = Class{
         if self.state == self.knockbackState then return end
 
         -- Knockback
-        local vecFromOrigin = origin - self.position
+        local feetPosition = self.position + Vector(0,23)
+        local vecFromOrigin = origin - feetPosition
         self.velocity = self.velocity - vecFromOrigin:normalized() * knockback
         self:changeState(self.knockbackState)
 

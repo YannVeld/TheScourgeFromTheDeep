@@ -1,6 +1,6 @@
 
 local BossAI = Class{
-    bossActions = {walk=1, chase=2, firebreath=3, idle=4, firesword=5},
+    bossActions = {walk=1, chase=2, firebreath=3, idle=4, firesword=5, roar=6},
 
     init = function(self, bossInstance, playerInstance)
         self.boss = bossInstance
@@ -27,6 +27,7 @@ local BossAI = Class{
         if self.boss.state == self.boss.spawningState then return nil end
         if self.boss.state == self.boss.fireSwordState then return nil end
         if self.boss.state == self.boss.fireBreathState then return nil end
+        if self.boss.state == self.boss.roarState then return nil end
 
         -- Firesword
         local vecToPlayer = self.player.position - self.boss.position
@@ -62,6 +63,14 @@ local BossAI = Class{
             end
         end
 
+        if self.AIAction == BossAI.bossActions.roar then
+            if self.boss.roarState.attackEnded then 
+                return true
+            else
+                return false
+            end
+        end
+
         if self.AIAction == BossAI.bossActions.firesword then
             if self.boss.fireSwordState.attackEnded then 
                 return true
@@ -79,9 +88,14 @@ local BossAI = Class{
 
     getNextAction = function(self)
         --return 3
-        --local actionList = {1,2,4}
+        --local actionList = {BossAI.bossActions.idle, BossAI.bossActions.roar}
 
-        local actionList = {1,2,3,4}
+        local actionList = {BossAI.bossActions.idle,
+                            BossAI.bossActions.walk,
+                            BossAI.bossActions.chase,
+                            BossAI.bossActions.firebreath,
+                            BossAI.bossActions.roar,
+                            BossAI.bossActions.firesword}
 
         local next = Lume.randomchoice(actionList)
         while next == self.AIAction do
@@ -137,6 +151,11 @@ local BossAI = Class{
             self.timeUntilDecision = 2
         end
 
+        if self.AIAction == BossAI.bossActions.roar then
+            --print("Roaring")
+            self.requestedState = self.boss.roarState
+            self.timeUntilDecision = 2
+        end
 
 
         -- Follow mouse

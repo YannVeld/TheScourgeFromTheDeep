@@ -8,6 +8,7 @@ BossIdleState = require"Scripts.BossStates.BossIdleState"
 BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
 BossFireBreathState = require"Scripts.BossStates.BossFireBreathState"
+BossRoarState = require"Scripts.BossStates.BossRoarState"
 
 local Boss = Class{
     __includes = {Enemy},
@@ -40,6 +41,7 @@ local Boss = Class{
         self.walkingState = BossWalkingState(self)
         self.fireSwordState = BossFireSwordState(self)
         self.fireBreathState = BossFireBreathState(self)
+        self.roarState = BossRoarState(self)
 
         self.timeUntilDecision = 0
 
@@ -58,9 +60,9 @@ local Boss = Class{
 
 
         -- Sounds
-        self.fireSwordSound = love.audio.newSource("Sounds/Grunt1.wav", "static")
+        self.fireSwordSound = love.audio.newSource("Sounds/Grunt2.wav", "static")
         self.fireSwordSound:setVolume(SoundsVolume)
-        self.fireBreathSound = love.audio.newSource("Sounds/Grunt3.wav", "static")
+        self.fireBreathSound = love.audio.newSource("Sounds/Grunt1.wav", "static")
         self.fireBreathSound:setVolume(SoundsVolume)
         self.hurtSound1 = love.audio.newSource("Sounds/HurtBoss.wav", "static")
         self.hurtSound1:setVolume(SoundsVolume)
@@ -68,6 +70,8 @@ local Boss = Class{
         self.hurtSound2:setVolume(SoundsVolume)
         self.stompSound = love.audio.newSource("Sounds/Stomp.wav", "static")
         self.stompSound:setVolume(SoundsVolume)
+        self.roarSound = love.audio.newSource("Sounds/Grunt3.wav", "static")
+        self.roarSound:setVolume(SoundsVolume)
     end,
 
     DoDamage = function(self, amount, origin, knockback)
@@ -116,6 +120,9 @@ local Boss = Class{
 
         local isFireBreath = (self.state == self.fireBreathState) and (not self.fireBreathState.attackEnded)
         if isFireBreath then return self.fireBreathState end
+
+        local isRoaring = (self.state == self.roarState) and (not self.roarState.attackEnded)
+        if isRoaring then return self.roarState end
 
         return self.AI.requestedState
     end,
@@ -179,6 +186,7 @@ local Boss = Class{
         self.walkingState:passiveUpdate(dt)
         self.fireSwordState:passiveUpdate(dt)
         self.fireBreathState:passiveUpdate(dt)
+        self.roarState:passiveUpdate(dt)
 
         self.AI:update(dt)
 
