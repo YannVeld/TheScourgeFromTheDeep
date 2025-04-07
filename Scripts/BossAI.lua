@@ -24,6 +24,7 @@ local BossAI = Class{
 
     interruptAction = function(self)
         -- Dont interrupt certain states
+        if self.boss.state == self.boss.spawningState then return nil end
         if self.boss.state == self.boss.fireSwordState then return nil end
         if self.boss.state == self.boss.fireBreathState then return nil end
 

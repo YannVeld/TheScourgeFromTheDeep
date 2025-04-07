@@ -3,6 +3,7 @@ Enemy = require "Scripts.Enemy"
 
 BossAI = require "Scripts.BossAI"
 
+BossSpawningState = require"Scripts.BossStates.BossSpawningState"
 BossIdleState = require"Scripts.BossStates.BossIdleState"
 BossWalkingState = require"Scripts.BossStates.BossWalkingState"
 BossFireSwordState = require"Scripts.BossStates.BossFireSwordState"
@@ -29,10 +30,11 @@ local Boss = Class{
 
         self.position = position
         self.velocity = Vector(0.0, 0.0)
-        self.lookDir = 1
+        self.lookDir = -1
 
         self.targetPosition = self.position
 
+        self.spawningState = BossSpawningState(self)
         self.idleState = BossIdleState(self)
         self.walkingState = BossWalkingState(self)
         self.fireSwordState = BossFireSwordState(self)
@@ -40,7 +42,7 @@ local Boss = Class{
 
         self.timeUntilDecision = 0
 
-        self.state = self.idleState
+        self.state = self.spawningState
         self.AI = BossAI(self, self.player)
 
         local myColliderRect = Rectangle(Vector(0,0), 32, 8)
@@ -68,6 +70,9 @@ local Boss = Class{
     end,
 
     DoDamage = function(self, amount, origin, knockback)
+        -- Dont take damage while spawning
+        if self.state == self.spawningState then return end
+
         self:TakeDamage(amount)
 
         local snd = Lume.randomchoice({self.hurtSound1, self.hurtSound2})
@@ -102,6 +107,9 @@ local Boss = Class{
     end,
 
     getState = function(self)
+        local isSpawning = (self.state == self.spawningState) and (not self.spawningState.hasSpawned)
+        if isSpawning then return self.spawningState end
+
         local isFireSword = (self.state == self.fireSwordState) and (not self.fireSwordState.attackEnded)
         if isFireSword then return self.fireSwordState end
 
