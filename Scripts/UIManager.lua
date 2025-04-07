@@ -34,10 +34,12 @@ local UIManager = Class{
         self.dashShader:send("frac", 1.0)
         self.dashShader:send("topBound", 0.3)
         self.dashShader:send("bottomBound", 1.0)
-        self.bossHealthShader = love.graphics.newShader("Shaders/healthBarHorizontal.glsl")
-        self.bossHealthShader:send("frac", 1.0)
-        self.bossHealthShader:send("rightBound", 0.97)
-        self.bossHealthShader:send("leftBound", 0.211)
+        if self.boss ~= nil then
+            self.bossHealthShader = love.graphics.newShader("Shaders/healthBarHorizontal.glsl")
+            self.bossHealthShader:send("frac", 1.0)
+            self.bossHealthShader:send("rightBound", 0.97)
+            self.bossHealthShader:send("leftBound", 0.211)
+        end
     end,
 
     update = function(self, dt)
@@ -49,16 +51,20 @@ local UIManager = Class{
         dashFrac = Lume.clamp(dashFrac, 0.0, 1.0)
         self.dashShader:send("frac", dashFrac)
 
-        bossHealthFrac = self.boss.health / Boss.health 
-        bossHealthFrac = Lume.clamp(bossHealthFrac, 0.0, 1.0)
-        self.bossHealthShader:send("frac", bossHealthFrac)
+        if self.boss ~= nil then
+            bossHealthFrac = self.boss.health / Boss.health 
+            bossHealthFrac = Lume.clamp(bossHealthFrac, 0.0, 1.0)
+            self.bossHealthShader:send("frac", bossHealthFrac)
+        end
     end,
 
     draw = function(self)
         -- Meter sprites
         UIManager.healthMeterSprite:draw(self.healthMeterPos.x, self.healthMeterPos.y)
         UIManager.dashMeterSprite:draw(self.dashMeterPos.x, self.dashMeterPos.y)
-        UIManager.bossHealthMeterSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
+        if self.boss ~= nil then
+            UIManager.bossHealthMeterSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
+        end
 
         -- Content
         love.graphics.setShader(self.healthShader)
@@ -66,8 +72,10 @@ local UIManager = Class{
         love.graphics.setShader(self.dashShader)
         UIManager.dashMeterContentSprite:draw(self.dashMeterPos.x, self.dashMeterPos.y)
         love.graphics.setShader(self.bossHealthShader)
-        UIManager.bossHealthMeterContentSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
-        love.graphics.setShader()
+        if self.boss ~= nil then
+            UIManager.bossHealthMeterContentSprite:draw(self.bossHealthMeterPos.x, self.bossHealthMeterPos.y)
+            love.graphics.setShader()
+        end
     end,
 }
 

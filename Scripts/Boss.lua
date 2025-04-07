@@ -76,7 +76,6 @@ local Boss = Class{
     end,
 
     destroySelf = function(self)
-        World:remove(self.collider)
         self:destroy()
     end,
 
@@ -178,6 +177,10 @@ local Boss = Class{
         self:doMovement(dt)
 
         self.zorder = self.position.y + Boss.zorderPosOffset
+    end,
+
+    onDestroy = function(self)
+        World:remove(self.collider)
     end,
 
     drawShadow = function(self)

@@ -135,6 +135,10 @@ local Barrel = Class{
         self.zorder = self.position.y
     end,
 
+    onDestroy = function(self)
+        World:remove(self.collider)
+    end,
+
     drawShadow = function(self)
         --love.graphics.setColor(68/255,56/255,70/255,1)
         love.graphics.setColor(0,0,0,0.6)

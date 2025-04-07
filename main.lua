@@ -8,7 +8,8 @@ require "Scripts.Collisions.Collider"
 require "Scripts.Collisions.ColliderWorld"
 
 local Gamestate_thegame = require("GameStates/thegame")
-local initialGameState = Gamestate_thegame
+local Gamestate_thetutorial = require("GameStates/thetutorial")
+local initialGameState = Gamestate_thetutorial
 
 local camera, instanceManager
 
@@ -39,6 +40,17 @@ function love.load()
     -- Setup font
     Fonts.m3x6:setLineHeight(0.7)
     love.graphics.setFont(Fonts.m3x6)
+end
+
+function SwitchGameState(fromstate)
+    if fromstate == Gamestate_thetutorial then
+        InstanceManager:removeAll()
+        Gamestate.switch(Gamestate_thegame)
+    end
+    if fromstate == Gamestate_thegame then
+        InstanceManager:removeAll()
+        Gamestate.switch(Gamestate_thetutorial)
+    end
 end
 
 function love.update(dt)

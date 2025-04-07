@@ -18,6 +18,7 @@ InstanceManagerClass = Class{
     end,
 
     remove = function(instance)
+        instance:onDestroy()
         Lume.remove(InstanceManager.list, instance)
     end,
 
@@ -62,7 +63,11 @@ InstanceManagerClass = Class{
     end,
 
     removeAll = function()
-        Lume.clear(InstanceManager.list)
+        local ii
+        for ii=#InstanceManager.list,1,-1 do
+            local instance = InstanceManager.list[ii]
+            InstanceManager.remove(instance)
+        end
     end,
 }
 

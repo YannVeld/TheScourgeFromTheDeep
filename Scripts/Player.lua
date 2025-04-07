@@ -174,7 +174,6 @@ local Player = Class{
 
     checkDead = function(self)
         if self.isDead then
-            World:remove(self.collider)
             self:destroy()
         end
     end,
@@ -230,6 +229,11 @@ local Player = Class{
         self.inputManager:lateUpdate(dt)
 
         self.zorder = self.position.y + Player.zorderPosOffset
+    end,
+
+    onDestroy = function(self)
+        World:remove(self.collider)
+        World:remove(self.hitbox)
     end,
 
     drawShadow = function(self)

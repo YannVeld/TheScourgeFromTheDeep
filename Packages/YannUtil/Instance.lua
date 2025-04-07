@@ -29,4 +29,7 @@ return Class{
         InstanceManager.remove(self)
         self=nil
     end,
+
+    onDestroy = function(self)
+    end,
 }
