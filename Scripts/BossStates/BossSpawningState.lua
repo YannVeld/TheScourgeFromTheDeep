@@ -1,9 +1,9 @@
 
 BossSpawningState = Class{
 
-    spawnTime = 2,
+    spawnTime = 1,
 
-    spriteSheet = Sprites.Boss_idle,
+    spriteSheet = Sprites.Boss_roar,
     animSpeed = 10,
     spriteOffsetHor = -5,
     spriteOffsetVer = 26,
@@ -12,15 +12,26 @@ BossSpawningState = Class{
         self.boss = bossInstance
 
         self.sprites = SpriteLoading.getSpritesFromSpriteSheet(BossSpawningState.spriteSheet, 96, 96, 0, 0)
-        self.idleAnimation = Animation(self.sprites, BossSpawningState.animSpeed)
+        self.roarAnimation = Animation(self.sprites, BossSpawningState.animSpeed, 1, false)
 
         self.spawnCountdown = BossSpawningState.spawnTime
         self.hasSpawned = false
+        self.playedSound = false
     end,
 
     enter = function(self)
         self.boss.velocity = Vector(0,0)
+        self.playedSound = false
     end,
+
+    doAttackSound = function(self)
+        if self.playedSound then return end
+
+        if self.roarAnimation.curFrame >= 3 then
+            self.boss.roarSound:play()
+            self.playedSound = true
+        end
+    end,   
 
     updateHealth = function(self)
         local frac = 1 - self.spawnCountdown / BossSpawningState.spawnTime
@@ -30,8 +41,9 @@ BossSpawningState = Class{
     end,
 
     update = function(self, dt)
+        self:doAttackSound()
         self.spawnCountdown = self.spawnCountdown - dt
-        self.idleAnimation:update(dt)
+        self.roarAnimation:update(dt)
 
         self:updateHealth()
 
@@ -47,7 +59,7 @@ BossSpawningState = Class{
     draw = function(self)
         local ox = self.sprites[1]:getWidth() / 2 + BossSpawningState.spriteOffsetHor
         local oy = self.sprites[1]:getHeight() / 2 + BossSpawningState.spriteOffsetVer
-        self.idleAnimation:draw(self.boss.position.x, self.boss.position.y, 
+        self.roarAnimation:draw(self.boss.position.x, self.boss.position.y, 
                                 0, -self.boss.lookDir, 1, ox, oy)
 
     end,
